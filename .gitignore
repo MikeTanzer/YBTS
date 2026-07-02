@@ -1,0 +1,44 @@
+# This folder is a multi-project workspace — the YakoByTheSea repo tracks ONLY
+# the game. Everything is ignored unless explicitly whitelisted below.
+/*
+
+# --- the game ---
+!/.gitignore
+!/README.md
+!/keyboard-fun.html
+!/manifest.webmanifest
+!/sw.js
+
+# code + data + tools
+!/js/
+!/data/
+!/tools/
+
+# art & video the game loads
+!/background.jpg
+!/gameui.png
+!/freepanel.png
+!/gameui_anim.mp4
+!/home_bg.mp4
+!/reactions.mp4
+!/scene1.png
+!/scene2.png
+!/scene3.png
+!/scene4.png
+!/scene5.png
+!/scene6.png
+!/yako.png
+!/yako_cheer.png
+
+# UI kit (excluding local art backups)
+!/ui/
+ui/_orig_art/
+ui/_framed_orig/
+ui/_orig_btns/
+
+# recorded narration + the clip-review tools (raw source recordings excluded)
+!/voice/
+/voice/src_*.mp3
+
+# OS noise
+.DS_Store

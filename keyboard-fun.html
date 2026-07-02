@@ -1,0 +1,1748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yako by the Sea — Learn & Play!</title>
+<link rel="icon" type="image/png" href="ui/favicon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2f6fb0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Yako">
+<link rel="apple-touch-icon" href="ui/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --parch:  #f7eccb;
+    --parch2: #fdf6e0;
+    --gold:   #cba24a;
+    --gold-d: #a9762a;
+    --ink:    #5b4327;
+    --blue:   #2f6fb0;
+    --blue-d: #27598f;
+  }
+  html, body {
+    margin: 0; padding: 0; height: 100%; overflow: hidden; color: var(--ink);
+    font-family: 'Baloo 2', 'Fredoka', -apple-system, "Comic Sans MS", "Segoe UI", sans-serif;
+    user-select: none; -webkit-user-select: none;
+  }
+  /* Real Carmel-by-the-Sea beach photo ("background.jpg"), with a seaside
+     gradient as the fallback if the photo file isn't present. */
+  body {
+    background: linear-gradient(180deg, #9ed8f0 0%, #bfe7f4 28%, #76bcd9 46%, #4ea7c9 56%, #ead9ab 72%, #ddc593 100%);
+    background-attachment: fixed;
+  }
+
+  /* ---------- Start screen ---------- */
+  #start {
+    position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    z-index: 10; overflow: hidden; background: #3b6b86;
+  }
+  #bgvid { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+
+  /* ===== Home menu composed from kit pieces over the animated video ===== */
+  .homeUI { position: relative; z-index: 2; display: flex; flex-direction: column;
+    align-items: center; gap: 1.3vh; max-height: 97vh; }
+  .homeTitle { font-family: 'Baloo 2'; font-weight: 800; font-size: 6vw; line-height: .95; text-align: center;
+    color: var(--blue);
+    text-shadow: 0 0 3px #fff, 0 2px 0 #fff, 2px 0 0 #fff, -2px 0 0 #fff, 0 -2px 0 #fff, 0 4px 14px rgba(0,0,0,.5); }
+  .homeTitle span { display: block; font-size: .62em; color: var(--gold-d); }
+  .homeRibbon { font-size: 1.7vw; font-weight: 700; color: #7a5a2e; background: #f6d9a8;
+    border: 3px solid var(--gold); border-radius: 999px; padding: .4vh 1.6vw; box-shadow: 0 4px 10px rgba(60,45,15,.3); }
+  .homeCard { background: #f4e8c8; border: 5px solid var(--gold); border-radius: 26px;
+    padding: 2vh 2.6vw; display: flex; flex-direction: column; align-items: center; gap: 1.5vh;
+    box-shadow: 0 16px 36px rgba(40,30,10,.45), inset 0 0 0 3px rgba(255,255,255,.4); }
+  .homeCard .nameRow { display: flex; align-items: center; gap: 1.2vw; font-size: 2.4vh; font-weight: 800; color: var(--ink); }
+  #start #nameInput {
+    font-family: 'Baloo 2'; font-weight: 700; font-size: 2.4vh; text-align: center;
+    color: var(--blue-d); width: 9em; padding: .8vh 1.2vw;
+    background: linear-gradient(#fffdf6, #f6efdc);
+    border: 2px solid #d9c38a; border-radius: 14px; outline: none;
+    box-shadow: inset 0 2px 5px rgba(120,90,40,.16), 0 2px 3px rgba(255,255,255,.5);
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  #start #nameInput::placeholder { color: #bcab83; font-weight: 500; font-size: .8em; }
+  #start #nameInput:focus { border-color: var(--blue);
+    box-shadow: inset 0 2px 5px rgba(120,90,40,.12), 0 0 0 3px rgba(47,111,176,.25); background: #fffef9; }
+  .homeCard .ansRow { display: flex; align-items: center; gap: .9vw; font-size: 1.7vh; color: #6b5532; font-weight: 600; flex-wrap: wrap; justify-content: center; }
+  #start .ansBtn { width: 9vw; min-width: 118px; height: 5vh; min-height: 40px; background: transparent;
+    border: none; box-shadow: none; background-size: 100% 100%; background-repeat: no-repeat; cursor: pointer;
+    padding: 0; transition: transform .1s ease; }
+  #start .ansBtn:active { transform: scale(.95); }
+  #start .ansBtn[data-ans="letter"]        { background-image: url('ui/first_off.png'); }
+  #start .ansBtn[data-ans="letter"].active { background-image: url('ui/first_on.png'); }
+  #start .ansBtn[data-ans="number"]        { background-image: url('ui/number_off.png'); }
+  #start .ansBtn[data-ans="number"].active { background-image: url('ui/number_on.png'); }
+  /* ===== Clean all-CSS mode buttons (uniform 3-D bevel + gold border) ===== */
+  .btnGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.7vh 1.4vw;
+    width: min(840px, 88vw); max-width: none; }
+  #start .btnGrid .modeBtn {
+    --bg: #777; position: relative; width: auto; min-width: 0; height: auto; min-height: clamp(96px, 12vh, 132px);
+    border: 4px solid #f2d274; border-radius: 22px; padding: 1.4vh 1vw 1.1vh; cursor: pointer; text-align: center;
+    color: #fff7e5; font-family: Georgia, serif; overflow: hidden;
+    background:
+      radial-gradient(circle at 20% 15%, rgba(255,255,255,.22), transparent 28%),
+      linear-gradient(180deg, color-mix(in srgb, var(--bg), #fff 12%), var(--bg));
+    box-shadow: 0 8px 0 color-mix(in srgb, var(--bg), #000 38%), 0 14px 20px rgba(34,21,4,.24);
+    outline: 3px solid color-mix(in srgb, var(--bg), #000 30%); outline-offset: 0;
+    transition: transform .12s ease, box-shadow .12s ease; }
+  #start .btnGrid .modeBtn::before { content: ''; position: absolute; inset: 6px; pointer-events: none;
+    border: 2px solid rgba(255,255,255,.7); border-radius: 16px; }
+  #start .btnGrid .modeBtn::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .18;
+    background-image: radial-gradient(rgba(255,255,255,.65) 1px, transparent 1px); background-size: 12px 12px; mix-blend-mode: soft-light; }
+  #start .btnGrid .modeBtn:hover { transform: translateY(-2px); }
+  #start .btnGrid .modeBtn:active { transform: translateY(5px);
+    box-shadow: 0 3px 0 color-mix(in srgb, var(--bg), #000 38%), 0 6px 10px rgba(34,21,4,.18); }
+  #start .btnGrid .modeBtn .title { position: relative; z-index: 1; display: block; font-weight: 900; line-height: 1;
+    font-size: clamp(20px, 2vw, 34px); margin-bottom: .7vh; color: #fff7e5;
+    text-shadow: 2px 2px 0 rgba(35,22,8,.85), -1px -1px 0 rgba(35,22,8,.35); }
+  #start .btnGrid .modeBtn .sub { position: relative; z-index: 1; display: block; color: #fff7e5;
+    font-family: 'Trebuchet MS', Georgia, serif; font-weight: 900; font-size: clamp(15px, 1.4vw, 24px);
+    letter-spacing: .16em; text-shadow: 2px 2px 0 rgba(35,22,8,.7); }
+  #start .btnGrid .modeBtn .icons { position: relative; z-index: 1; display: block; font-size: clamp(18px, 1.7vw, 28px);
+    letter-spacing: .16em; text-shadow: 0 3px 0 rgba(0,0,0,.35); }
+  #start .modeBtn[data-mode="both"] .title,
+  #start .modeBtn[data-mode="sounds"] .title,
+  #start .modeBtn[data-mode="math"] .title { font-size: clamp(15px, 1.5vw, 23px); }
+  #start .modeBtn[data-mode="free"] .sub  { letter-spacing: 0; font-size: clamp(24px, 2.2vw, 34px); }
+  /* per-mode colours */
+  #start .modeBtn[data-mode="letters"]  { --bg: #137fc2; }
+  #start .modeBtn[data-mode="numbers"]  { --bg: #56aa2a; }
+  #start .modeBtn[data-mode="both"]     { --bg: #a73bb0; }
+  #start .modeBtn[data-mode="shapes"]   { --bg: #199f94; }
+  #start .modeBtn[data-mode="colors"]   { --bg: #df4050; }
+  #start .modeBtn[data-mode="animals"]  { --bg: #e78b16; }
+  #start .modeBtn[data-mode="spelling"] { --bg: #c77b14; }
+  #start .modeBtn[data-mode="free"]     { --bg: #6257c9; }
+  #start .modeBtn[data-mode="counting"] { --bg: #199f94; }
+  #start .modeBtn[data-mode="sounds"]   { --bg: #c2487e; }
+  #start .modeBtn[data-mode="countobj"] { --bg: #d98324; }
+  #start .modeBtn[data-mode="math"]     { --bg: #4a8f8a; }
+  /* Language + voice-character toggles */
+  .langBar { display: flex; align-items: center; justify-content: center; gap: clamp(12px, 2.4vw, 32px);
+    flex-wrap: wrap; margin-top: 1.6vh; }
+  .langBar .toggleRow { display: flex; gap: clamp(6px, 1vw, 14px); align-items: center; }
+  .langBar #personaRow { border-left: 2px solid rgba(120,90,40,.25); padding-left: clamp(10px, 1.6vw, 22px); }
+  .langBar button { cursor: pointer; border: 3px solid transparent; border-radius: 14px;
+    background: rgba(255,255,255,.5); line-height: 1; padding: .5vh .7vw; font-size: clamp(22px, 2.5vw, 36px);
+    transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease, background .12s ease; }
+  .langBar button:hover { transform: translateY(-2px); }
+  .langBar button.sel { border-color: var(--gold); background: #fff7df;
+    box-shadow: 0 4px 12px rgba(60,45,15,.3), inset 0 0 0 2px rgba(255,255,255,.7); transform: translateY(-1px); }
+  /* Yako (opaque, clean cutout) on the right, behind the menu so he can't overlap it */
+  /* Yako waves & the puppy wags its tail — a transparent PNG sprite sheet (40 frames)
+     stepped by CSS, ping-ponged with 'alternate' for a seamless loop. */
+  .homeChar { position: fixed; right: 0; bottom: 0; z-index: 1; pointer-events: none;
+    height: 52vh; width: calc(52vh * 0.7037);
+    background-image: url('ui/yako_wave.png'); background-repeat: no-repeat;
+    background-size: 4000% 100%; background-position: 0% 0%;
+    filter: drop-shadow(0 8px 14px rgba(0,0,0,.35));
+    animation: charIn .8s ease-out both,
+               yakoWave 3.4s steps(39) .8s infinite alternate,
+               charBob 4.5s ease-in-out .8s infinite; }
+  .homeUI { margin-left: 0; }
+
+  /* ---- Living storybook: gentle idle animations + an intro on load ---- */
+  @keyframes charIn   { from { transform: translateX(45%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes charBob  { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-1.1vh); } }
+  @keyframes yakoWave { from { background-position-x: 0%; } to { background-position-x: 100%; } }
+  @keyframes titleIn { 0% { transform: translateY(-28px) scale(.8); opacity: 0; } 60% { transform: translateY(0) scale(1.07); } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+  @keyframes cardIn  { from { transform: translateY(42px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  @keyframes ribbonIn{ 0% { transform: scale(.6); opacity: 0; } 70% { transform: scale(1.12); } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes iconBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  .homeTitle  { animation: titleIn .8s cubic-bezier(.2,1.5,.4,1) both; }
+  .homeRibbon { animation: ribbonIn .7s cubic-bezier(.2,1.5,.4,1) .45s both; }
+  .homeCard   { animation: cardIn .7s ease-out .2s both; }
+  #start .btnGrid .modeBtn .icons { animation: iconBob 2.4s ease-in-out infinite; display: inline-block; }
+  #start .btnGrid .modeBtn:nth-child(2) .icons { animation-delay: .2s; }
+  #start .btnGrid .modeBtn:nth-child(3) .icons { animation-delay: .4s; }
+  #start .btnGrid .modeBtn:nth-child(4) .icons { animation-delay: .6s; }
+  #start .btnGrid .modeBtn:nth-child(5) .icons { animation-delay: .8s; }
+  #start .btnGrid .modeBtn:nth-child(6) .icons { animation-delay: 1s; }
+  #start .btnGrid .modeBtn:nth-child(7) .icons { animation-delay: .3s; }
+  #start .btnGrid .modeBtn:nth-child(8) .icons { animation-delay: .5s; }
+  #start .btnGrid .modeBtn:nth-child(9) .icons { animation-delay: .7s; }
+  #start .modeBtn[data-mode="free"] .sub { animation: iconBob 2.2s ease-in-out .3s infinite; display: inline-block; }
+  @media (prefers-reduced-motion: reduce) { .homeChar,.homeTitle,.homeRibbon,.homeCard,.modeBtn .icons,.modeBtn .sub { animation: none !important; } }
+  /* CSS pill (real text) instead of a stretched PNG — never distorts as the window grows */
+  .homeFoot { position: fixed; bottom: 1.4vh; left: 50%; transform: translateX(-50%); z-index: 2;
+    width: auto; max-width: 94vw; height: auto;
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    padding: 8px 26px; box-sizing: border-box;
+    background: linear-gradient(#f7e4b4, #e7c884);
+    border: 4px solid var(--gold); border-radius: 999px;
+    box-shadow: 0 6px 16px rgba(60,45,15,.32), inset 0 0 0 3px rgba(255,255,255,.45);
+    font-family: 'Baloo 2', sans-serif; color: #6e4f24; text-shadow: 0 1px 0 rgba(255,255,255,.5);
+    white-space: nowrap; }
+  .homeFoot .footIcon { font-size: clamp(16px, 1.9vw, 26px); line-height: 1; flex: 0 0 auto;
+    filter: drop-shadow(0 1px 1px rgba(90,60,15,.35)); }
+  .homeFoot .footText { display: flex; align-items: baseline; gap: 14px; min-width: 0; }
+  .homeFoot .footText b  { font-weight: 800; font-size: clamp(12px, 1.5vw, 19px); }
+  .homeFoot .footText em { font-style: normal; font-weight: 600; font-size: clamp(11px, 1.3vw, 16px); color: #8a6a36; }
+  /* The painted home menu, scaled to fit; hotspots positioned in % of the image */
+  .homeStage { position: relative; }
+  .homeStage img.bg { display: block; max-width: 100vw; max-height: 100vh; width: auto; height: auto;
+    transform-origin: 60% 70%; animation: homeBreathe 11s ease-in-out infinite alternate; }
+  @keyframes homeBreathe {
+    0%   { transform: scale(1.0)   translateY(0); filter: brightness(1); }
+    50%  { transform: scale(1.012) translateY(-0.4%); filter: brightness(1.03); }
+    100% { transform: scale(1.022) translateY(-0.8%); filter: brightness(1); }
+  }
+
+  /* Free Play foreground: painted "Find the key" card showing the touched key */
+  #freecard { position: fixed; left: 50%; top: 42%; transform: translate(-50%, -50%); z-index: 5;
+    display: none; }
+  #game.free-mode #freecard { display: block; }
+  #freecard .freecardImg { display: block; width: min(68vw, 82vh); height: auto;
+    aspect-ratio: 1.22; object-fit: fill;          /* taller than the native 1.5 card */
+    filter: drop-shadow(0 14px 30px rgba(0,0,0,.4)); }
+  #freeLetter { position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center; background: transparent;
+    font-family: 'Baloo 2', sans-serif; font-weight: 800; color: var(--blue);
+    font-size: min(22vh, 34vw); line-height: 1; box-sizing: border-box;
+    overflow: visible; }
+  /* moving sun-glint shimmer over the painted sea (suggests rolling waves) */
+  .seaShimmer {
+    position: absolute; left: 53%; top: 8%; width: 47%; height: 44%; pointer-events: none;
+    opacity: .4; mix-blend-mode: screen;
+    background: repeating-linear-gradient(112deg,
+      rgba(255,255,255,0) 0 16px, rgba(255,255,255,.30) 16px 21px, rgba(255,255,255,0) 21px 42px);
+    background-size: 220% 100%;
+    animation: seaRoll 7s linear infinite;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
+  }
+  @keyframes seaRoll { from { background-position: 0 0; } to { background-position: 220% 0; } }
+
+  .homeStage .hotspot {
+    position: absolute; margin: 0; padding: 0; background: transparent; border: 2px solid transparent;
+    border-radius: 12px; cursor: pointer; color: transparent; font-size: 0; box-shadow: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .homeStage .hotspot:focus { outline: none; }
+  .homeStage .modeBtn.hotspot:active { transform: scale(.96); }
+  .homeStage .ansBtn.hotspot.active { border-color: rgba(40,89,143,.0); }
+  /* a soft ring shows which answer-style is selected (since the art is static) */
+  .homeStage .ansBtn.hotspot.active { box-shadow: 0 0 0 3px rgba(255,210,70,.9); }
+  /* the name field sits over the painted "Jake" box and covers it */
+  .homeStage #nameInput.hotspot {
+    color: var(--blue-d); font-weight: 700; font-family: 'Baloo 2', sans-serif;
+    text-align: center; background: transparent; border: none; border-radius: 14px;
+  }
+  /* --- calibrated positions (% of the home image) --- */
+  .homeStage #nameInput { left: 45.6%; top: 42.4%; width: 27%;   height: 6.2%; font-size: 2.6vh; }
+  .homeStage .ansBtn[data-ans="letter"] { left: 56.3%; top: 50%;   width: 11%;   height: 4.8%; }
+  .homeStage .ansBtn[data-ans="number"] { left: 69%;   top: 50%;   width: 16%;   height: 4.8%; }
+  .homeStage .modeBtn[data-mode="letters"] { left: 28%; top: 56.3%; width: 16%;   height: 8%; }
+  .homeStage .modeBtn[data-mode="numbers"] { left: 46%; top: 56.3%; width: 17%;   height: 8%; }
+  .homeStage .modeBtn[data-mode="both"]    { left: 65%; top: 56.3%; width: 17%;   height: 8%; }
+  .homeStage .modeBtn[data-mode="shapes"]  { left: 28%; top: 66.4%; width: 16%;   height: 8%; }
+  .homeStage .modeBtn[data-mode="colors"]  { left: 46%; top: 66.4%; width: 17%;   height: 8%; }
+  .homeStage .modeBtn[data-mode="animals"] { left: 65%; top: 66.4%; width: 17%;   height: 8%; }
+  .homeStage .modeBtn[data-mode="free"]    { left: 45%; top: 77.2%; width: 19%;   height: 8%; }
+
+  /* Crisp kit button artwork laid over the painted buttons, with press states */
+  .homeStage .modeBtn {
+    background-size: 100% 100%; background-repeat: no-repeat; background-position: center;
+    box-shadow: none; transition: transform .1s ease;
+  }
+  .homeStage .modeBtn:hover { transform: scale(1.04); }
+  .homeStage .modeBtn:active { transform: scale(.94); }
+  .homeStage .modeBtn[data-mode="letters"] { background-image: url('ui/letters.png'); }
+  .homeStage .modeBtn[data-mode="numbers"] { background-image: url('ui/numbers.png'); }
+  .homeStage .modeBtn[data-mode="both"]    { background-image: url('ui/both.png'); }
+  .homeStage .modeBtn[data-mode="shapes"]  { background-image: url('ui/shapes.png'); }
+  .homeStage .modeBtn[data-mode="colors"]  { background-image: url('ui/colors.png'); }
+  .homeStage .modeBtn[data-mode="animals"] { background-image: url('ui/animals.png'); }
+  .homeStage .modeBtn[data-mode="free"]    { background-image: url('ui/free.png'); }
+  /* painted toggles kept; a gold ring marks the selected one */
+  .homeStage .ansBtn.hotspot.active { box-shadow: 0 0 0 3px rgba(255,200,60,.95); border-radius: 12px; }
+  .logo { font-family: 'Baloo 2'; font-weight: 800; font-size: 4.8vw; line-height: 1; margin: 0;
+    text-shadow: 0 3px 0 #fff, 0 6px 16px rgba(0,0,0,.25); }
+  .logo .lk { color: #6b4a2b; }
+  .logo .lb { color: var(--blue); }
+  .ribbon { font-size: 1.6vw; font-weight: 700; color: #7a5a2e; background: #f6d9a8;
+    border: 3px solid var(--gold); border-radius: 999px; padding: .3vh 1.4vw;
+    box-shadow: 0 4px 10px rgba(60,45,15,.25); }
+  #start .hero { line-height: 1; font-size: 6vh; animation: bob 1.8s ease-in-out infinite alternate; }
+  .heroImg { height: 10vh; border-radius: 20px; border: 4px solid var(--gold); object-fit: cover;
+    box-shadow: 0 10px 24px rgba(60,45,15,.35); display: block; }
+  @keyframes bob { from { transform: translateY(0) rotate(-1.5deg); } to { transform: translateY(-1.2vh) rotate(1.5deg); } }
+  .startCard { padding: 1.4vh 3vw; display: flex; flex-direction: column; gap: 1.1vh; align-items: center; }
+  .subtle { font-size: 1.4vw !important; color: #5b4327 !important; font-weight: 600;
+    background: rgba(255,255,255,.62); border-radius: 999px; padding: .5vh 1.6vw;
+    -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+
+  /* parchment panel look shared by cards */
+  .card { background: var(--parch); border: 5px solid var(--gold);
+    border-radius: 22px; box-shadow: 0 10px 26px rgba(80,60,20,.28), inset 0 0 0 3px rgba(255,255,255,.35); }
+
+  .modes { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+  .modeRow { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; }
+  .modeBtn {
+    font-family: inherit; font-weight: 700; font-size: 2vw; line-height: 1.15;
+    padding: 12px 26px; border: 4px solid rgba(255,255,255,.65); border-radius: 22px; cursor: pointer; color: #fff;
+    text-shadow: 0 2px 5px rgba(0,0,0,.3);
+    box-shadow: 0 10px 22px rgba(60,45,15,.3), inset 0 2px 0 rgba(255,255,255,.5), inset 0 -6px 10px rgba(0,0,0,.18);
+    transition: transform .12s ease, filter .12s ease;
+  }
+  .modeBtn:hover { transform: translateY(-3px); filter: brightness(1.06); }
+  .modeBtn:active { transform: translateY(3px) scale(.98); }
+  .modeBtn.letters { background: linear-gradient(135deg, #4facfe, #2f6fb0); }
+  .modeBtn.numbers { background: linear-gradient(135deg, #43e97b, #2bb673); }
+  .modeBtn.both    { background: linear-gradient(135deg, #c471f5, #9b4dd6); }
+  .modeBtn.shapes  { background: linear-gradient(135deg, #00c9a7, #0093a8); }
+  .modeBtn.colors  { background: linear-gradient(135deg, #f857a6, #e0466b); }
+  .modeBtn.animals { background: linear-gradient(135deg, #f7971e, #f0a500); }
+  .modeBtn.free    { background: linear-gradient(135deg, #7e8cff, #5566e0); }
+
+  /* name entry */
+  .nameRow { display: flex; align-items: center; gap: 14px; font-size: 2.1vw; color: var(--ink); font-weight: 700; }
+  #nameInput {
+    font-family: inherit; font-weight: 700; font-size: 2.1vw; text-align: center;
+    padding: 10px 18px; width: 7em; color: var(--blue-d);
+    background: var(--parch2); border: 4px solid var(--gold); border-radius: 16px;
+  }
+  #nameInput::placeholder { color: #b6a578; font-weight: 500; font-size: .72em; }
+  #nameInput:focus { outline: none; border-color: var(--blue); }
+
+  /* answer-style toggle */
+  .answerRow { display: flex; align-items: center; gap: 12px; font-size: 1.5vw; color: #6b5532; flex-wrap: wrap; justify-content: center; font-weight: 600; }
+  .ansBtn {
+    font-family: inherit; font-weight: 700; font-size: 1.5vw; cursor: pointer;
+    padding: 9px 18px; border-radius: 14px; border: 3px solid var(--gold);
+    background: var(--parch2); color: var(--ink); transition: transform .1s ease;
+  }
+  .ansBtn:active { transform: scale(.96); }
+  .ansBtn.active { background: var(--blue); color: #fff; border-color: var(--blue-d); }
+
+  /* ---------- Game stage ---------- */
+  #game { position: fixed; inset: 0; display: none; z-index: 1;
+    align-items: center; justify-content: center; background: #26506a; }
+  /* Free Play cinematic background (animated) + film vignette */
+  #freeBg { display: none; position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+  #freeVignette { display: none; position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    background: radial-gradient(ellipse at 50% 45%, transparent 48%, rgba(8,14,30,.55) 100%);
+    box-shadow: inset 0 0 160px 50px rgba(8,14,30,.5); }
+  #game.free-mode #freeBg, #game.free-mode #freeVignette { display: block; }
+  #flash { position: fixed; inset: 0; opacity: 0; pointer-events: none; z-index: 2; }
+  @keyframes flashPulse { 0% { opacity: 0; } 18% { opacity: .26; } 100% { opacity: 0; } }
+
+  /* level star progress bar */
+  #starbar {
+    position: fixed; top: 1.6vh; left: 50%; transform: translateX(-50%); z-index: 6;
+    display: flex; gap: 1vw; padding: .6vh 2vw; background: var(--parch);
+    border: 4px solid var(--gold); border-radius: 999px; box-shadow: 0 6px 16px rgba(60,45,15,.3);
+  }
+  .lvlStar { font-size: 3.4vh; color: #cbb88c; transition: transform .2s, color .2s; }
+  .lvlStar.on { color: #f4b73d; text-shadow: 0 0 10px rgba(244,183,61,.8); animation: starPop .4s cubic-bezier(.2,1.5,.4,1); }
+  @keyframes starPop { 0% { transform: scale(.3); } 70% { transform: scale(1.4); } 100% { transform: scale(1); } }
+
+  #score {
+    position: fixed; top: 1.6vh; right: 2vw; font-size: 2.3vw; font-weight: 800;
+    color: #fff; z-index: 6; background: var(--blue); border: 4px solid #fff;
+    padding: .4vh 1.2vw; border-radius: 16px; box-shadow: 0 6px 16px rgba(0,0,0,.3);
+  }
+
+  /* the main "Find the key" panel */
+  #panel {
+    position: fixed; top: 9.5vh; left: 50%; transform: translateX(-50%); z-index: 3;
+    width: min(74vw, 1000px); padding: 1.6vh 3vw 2.4vh; text-align: center;
+    background: var(--parch); border: 6px solid var(--gold); border-radius: 30px;
+    box-shadow: 0 14px 34px rgba(60,45,15,.32), inset 0 0 0 3px rgba(255,255,255,.4);
+  }
+  #panel::before { content: '🐚'; position: absolute; left: 1.4vw; bottom: 1vh; font-size: 3vw; opacity: .85; }
+  #panel::after  { content: '🐠'; position: absolute; right: 1.4vw; bottom: 1vh; font-size: 3vw; opacity: .85; }
+  #prompt { font-size: 2.4vw; font-weight: 700; color: var(--ink); margin-bottom: .6vh; }
+  #target {
+    display: flex; align-items: center; justify-content: center; min-height: 24vh;
+    font-size: 22vh; font-weight: 800; color: var(--blue);
+    transition: transform .15s, color .15s;
+  }
+
+  /* picture + starting-letter row (First-letter answer style) */
+  .itemRow { display: flex; align-items: center; justify-content: center; gap: 2.5vw; max-width: 90%; }
+  .glyph { font-size: min(20vh, 24vw); line-height: 1; filter: drop-shadow(0 8px 18px rgba(0,0,0,.3)); }
+  .arrow { font-size: min(8vh, 7vw); color: var(--gold-d); }
+  .bigletter { font-size: min(22vh, 26vw); font-weight: 800; line-height: 1; }
+  .itemRow .swatch { width: min(18vh, 22vw); height: min(18vh, 22vw); }
+  /* Spelling / Counting word tiles */
+  .spellRow { display: flex; align-items: center; justify-content: center; gap: min(2vh, 2vw); flex-wrap: nowrap; max-width: 96%; }
+  .spellRow .sl { font-family: 'Baloo 2', sans-serif; font-weight: 800; line-height: 1;
+    font-size: min(13vh, 6vw); color: #cbb486; transition: color .2s ease, transform .2s ease; }
+  .spellRow .sl.done { color: #2bb673; }
+  .spellRow .sl.now  { color: var(--blue); transform: scale(1.14); text-shadow: 0 0 14px rgba(47,111,176,.5); }
+  /* give the multi-tile word room inside the painted desktop card */
+  #game.seq-mode .gameStage #target { left: 29%; width: 46%; top: 30%; height: 22%; font-size: inherit; }
+
+  /* Letter Sounds (phonics) */
+  .phonRow { display: flex; align-items: center; justify-content: center; gap: .35em; }
+  .phonLetter { font-family: 'Baloo 2', sans-serif; font-weight: 800; color: var(--blue); line-height: 1; font-size: min(16vh, 16vw); }
+  .phonPic { font-size: min(12vh, 12vw); }
+  .phonWord { text-align: center; font-family: 'Baloo 2', sans-serif; font-weight: 700; color: #5b4327; font-size: min(4vh, 5vw); margin-top: .15em; }
+  /* How Many? + Add & Subtract object groups */
+  .countObjRow, .mathRow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .12em; max-width: 96%; line-height: 1; }
+  .countObjRow .cobj, .mathRow .cobj { font-size: min(8vh, 8.5vw); }
+  .mathRow .grp { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .08em; }
+  .mathRow .mop, .mathRow .meq { font-family: 'Baloo 2', sans-serif; font-weight: 800; color: #5b4327; font-size: min(9vh, 9vw); margin: 0 .14em; }
+  .mathRow .mq { font-family: 'Baloo 2', sans-serif; font-weight: 800; color: var(--blue); font-size: min(12vh, 12vw); }
+  /* widen the painted desktop card so object groups fit */
+  #game.big-target .gameStage #target { left: 25%; width: 50%; top: 25%; height: 34%; font-size: inherit; }
+  /* hidden-answer placeholder (shown until the hint reveals it) */
+  .answerSlot, #target .bigQ { color: #c4b083 !important; }
+
+  /* Yako character images (real artwork, with emoji fallback) */
+  #yako .yakoChar { height: 17vh; border-radius: 18px; border: 4px solid var(--gold);
+    box-shadow: 0 8px 16px rgba(0,0,0,.3); object-fit: cover; }
+  #buddy img.buddyFace { height: 1em; border-radius: 16px; border: 5px solid var(--gold);
+    box-shadow: 0 8px 16px rgba(0,0,0,.35); }
+
+  .swatch {
+    width: min(20vh,22vw); height: min(20vh,22vw); border-radius: 22%;
+    box-shadow: inset 0 -10px 24px rgba(0,0,0,.25), inset 0 8px 18px rgba(255,255,255,.4), 0 6px 16px rgba(0,0,0,.25);
+  }
+
+  /* numbered multiple-choice chips */
+  #choices {
+    position: fixed; bottom: 13vh; width: 100%; display: none; gap: 2.2vw;
+    justify-content: center; flex-wrap: wrap; z-index: 5;
+  }
+  #game.choices-mode #choices { display: flex; }
+  .choice {
+    display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer;
+    background: var(--parch); border: 5px solid var(--gold); border-radius: 22px;
+    padding: 1.2vh 1.8vw; min-width: 11vw; box-shadow: 0 8px 20px rgba(60,45,15,.28);
+    transition: border-color .15s, background .15s, transform .15s;
+  }
+  .choice .num { font-size: 3.2vw; font-weight: 800; color: var(--blue); line-height: 1; }
+  .choice .glyph { font-size: 5vw; line-height: 1; filter: none; }
+  .choice .swatch { width: 5vw; height: 5vw; }
+  .choice .nm { font-size: 1.6vw; color: var(--ink); font-weight: 600; }
+  .choice.correct { border-color: #2bb673; background: #d9f5e3; transform: scale(1.06); }
+  .choice.wrong   { border-color: #e0466b; background: #fbdde3; }
+  #game.choices-mode #target { top: 38%; min-height: 16vh; font-size: 16vh; }
+  #game.choices-mode #target .swatch { width: min(15vh,18vw); height: min(15vh,18vw); }
+  #game.choices-mode #target .glyph { font-size: min(15vh,18vw); }
+
+  /* ---------- On-screen keyboard ---------- */
+  #keyboard {
+    position: fixed; bottom: 7.5vh; left: 50%; transform: translateX(-50%); z-index: 4;
+    width: min(72vw, 1040px); display: flex; flex-direction: column; gap: .7vh;
+    background: var(--parch); border: 5px solid var(--gold); border-radius: 18px;
+    padding: 1vh .8vw; box-shadow: 0 12px 28px rgba(60,45,15,.32);
+  }
+  #game.choices-mode #keyboard, #game.free-mode #keyboard { display: none; }
+  .krow { display: flex; gap: .5vw; justify-content: center; }
+  .key {
+    flex: 1 1 0; min-width: 0; height: 5.4vh; display: flex; align-items: center; justify-content: center;
+    font-size: 2vh; font-weight: 700; color: var(--ink);
+    background: var(--parch2); border: 2px solid #ddc88f; border-radius: 9px;
+    box-shadow: 0 2px 0 #cbb274;
+  }
+  .key.mod { color: #fff; background: var(--blue); border-color: var(--blue-d); box-shadow: 0 2px 0 var(--blue-d); font-size: 1.4vh; flex: 1.5 1 0; }
+  .key.spacebar { flex: 7 1 0; }
+  .key.active { cursor: pointer; }
+  .key.active:active { transform: translateY(2px); box-shadow: none; }
+  .key.near { background: #fff0c4; border-color: #e8c768; box-shadow: 0 0 10px #ffe39a, 0 2px 0 #d9bd6e; }
+  .key.target { background: #ffe08a; border-color: #e0a93a; box-shadow: 0 0 16px #ffce5a, 0 2px 0 #d6a93a; animation: keyGlow 1.1s ease-in-out infinite alternate; }
+  @keyframes keyGlow { from { box-shadow: 0 0 8px #ffce5a, 0 2px 0 #d6a93a; } to { box-shadow: 0 0 22px #ffce5a, 0 2px 0 #d6a93a; } }
+  .key.hit-correct { background: #7bd88f; border-color: #2bb673; color: #0a5; }
+  .key.hit-wrong { background: #f3a6a6; border-color: #e0466b; color: #b33; }
+
+  /* ---------- Yako character ---------- */
+  #yako {
+    position: fixed; left: 1vw; bottom: 13vh; z-index: 4; font-size: 11vh; line-height: 1;
+    pointer-events: none; filter: drop-shadow(0 8px 16px rgba(0,0,0,.3));
+    animation: bob 1.8s ease-in-out infinite alternate;
+  }
+  #game.free-mode #yako { display: none; }
+
+  /* feedback card (Great job! / Oops!) */
+  #feedback {
+    position: fixed; right: 1.5vw; top: 12vh; z-index: 7; width: 17vw; min-width: 180px;
+    padding: 1.6vh 1.2vw; text-align: center; opacity: 0; transform: translateX(120%);
+    transition: transform .4s cubic-bezier(.2,1.3,.4,1), opacity .3s;
+    background: var(--parch); border: 5px solid var(--gold); border-radius: 22px;
+    box-shadow: 0 10px 24px rgba(60,45,15,.3);
+  }
+  #feedback.show { opacity: 1; transform: translateX(0); }
+  #feedback.good { border-color: #2bb673; }
+  #feedback.bad  { border-color: #e0466b; }
+  #feedback .fbFace { font-size: 7vh; display: block; }
+  #feedback img.fbFace { width: 88%; height: auto; border-radius: 14px; margin: 0 auto .5vh; }
+  #feedback .fbText { font-size: 1.9vw; font-weight: 800; }
+  #feedback.good .fbText { color: #2bb673; }
+  #feedback.bad  .fbText { color: #e0466b; }
+
+  /* pops for wrong keys / free play */
+  .pop {
+    position: absolute; font-weight: 800; line-height: 1; pointer-events: none; z-index: 6;
+    animation: pop 1.4s ease-out forwards; text-shadow: 0 0 12px rgba(255,255,255,.7), 0 3px 6px rgba(0,0,0,.35);
+  }
+  @keyframes pop {
+    0%   { transform: translate(-50%,-50%) scale(.2); opacity: 0; }
+    18%  { transform: translate(-50%,-50%) scale(1.1); opacity: 1; }
+    100% { transform: translate(-50%,-50%) scale(1.5); opacity: 0; }
+  }
+
+  /* celebration burst */
+  .confetti { position: absolute; width: 16px; height: 16px; border-radius: 3px; pointer-events: none; z-index: 7;
+    animation: fall 1.6s ease-in forwards; }
+  @keyframes fall {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(90vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* cheering buddy (Yako jumps in) */
+  #buddy {
+    position: fixed; bottom: 5vh; z-index: 8; display: flex; align-items: flex-end; gap: 1vw;
+    font-size: 18vh; pointer-events: none;
+    transition: transform .55s cubic-bezier(.2, 1.3, .4, 1);
+    filter: drop-shadow(0 12px 24px rgba(0,0,0,.4));
+  }
+  #buddy.left  { left: 2vw;  transform: translateX(-200%); }
+  #buddy.right { right: 2vw; transform: translateX(200%); flex-direction: row-reverse; }
+  #buddy.in { transform: translateX(0); }
+  #buddy .buddyFace { display: inline-block; animation: buddyBob .5s ease-in-out infinite alternate; }
+  #buddy .buddyGesture { display: inline-block; font-size: .68em; animation: gestureWiggle .32s ease-in-out infinite alternate; }
+  @keyframes buddyBob { from { transform: translateY(0); } to { transform: translateY(-2.2vh) rotate(-3deg); } }
+  @keyframes gestureWiggle { from { transform: rotate(-16deg) scale(.95); } to { transform: rotate(16deg) scale(1.12); } }
+
+  /* round home / sound buttons */
+  .roundBtn {
+    position: fixed; bottom: 2vh; z-index: 8; width: 7vh; height: 7vh; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 3.4vh; cursor: pointer;
+    background: var(--blue); color: #fff; border: 4px solid #fff; box-shadow: 0 6px 16px rgba(0,0,0,.3);
+  }
+  .roundBtn:active { transform: scale(.94); }
+  #exit  { left: 2vw; }
+  #sound { right: 2vw; }
+
+  #hint {
+    position: fixed; bottom: 1.4vh; left: 50%; transform: translateX(-50%); z-index: 5;
+    text-align: center; color: var(--ink); font-size: 1.6vw; font-weight: 700;
+    background: var(--parch); border: 3px solid var(--gold); border-radius: 999px; padding: .5vh 2vw;
+    box-shadow: 0 6px 14px rgba(60,45,15,.25);
+  }
+
+  /* level-complete overlay */
+  #win {
+    position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 9;
+    background: rgba(20,50,70,.45); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  }
+  #win.show { display: flex; }
+  .winCard {
+    background: var(--parch); border: 7px solid var(--gold); border-radius: 34px;
+    padding: 4vh 5vw; text-align: center; color: var(--ink);
+    box-shadow: 0 22px 60px rgba(0,0,0,.45), inset 0 0 0 3px rgba(255,255,255,.4);
+    animation: winPop .5s cubic-bezier(.2,1.4,.4,1);
+  }
+  @keyframes winPop { from { transform: scale(.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .winYako { display: block; width: min(26vh, 38vw); max-width: 240px; margin: -2vh auto 0; pointer-events: none;
+    animation: winYakoJump .6s cubic-bezier(.2,1.6,.4,1) .15s both, winYakoBob 1.9s ease-in-out .8s infinite; }
+  @keyframes winYakoJump { 0% { transform: translateY(40px) scale(.5); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+  @keyframes winYakoBob  { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  .winTitle { font-size: 4vw; font-weight: 800; color: var(--blue); }
+  .winStars { font-size: 7vw; color: #f4b73d; letter-spacing: .5vw; }
+  .winTime, .winBest { font-size: 2.6vw; font-weight: 700; }
+  .winImprove { font-size: 2.3vw; font-weight: 800; color: #2bb673; margin-top: 1vh; }
+  .winGo { font-size: 1.7vw; color: #7d6740; margin-top: 1.4vh; }
+
+  /* ===== Painted game interface (image mode) ===== */
+  /* Fill the whole page with the illustration; overlays are positioned as a
+     percentage of this same box, so they stay aligned to the painted art. */
+  .gameStage { position: relative; width: 100vw; height: 100vh; }
+  .gameStage .bg { display: block; width: 100vw; height: 100vh; object-fit: fill; }
+  #gameRibbon, #mfb { display: none; }   /* mobile-only elements */
+  #yako { display: none; }
+  #hint { display: none; }
+  #game.free-mode .gameStage { display: none; }
+  #game.free-mode #hint { display: block; }
+
+  .gameStage #starbar {
+    position: absolute; left: 35%; top: 3.8%; width: 30.5%; height: 9.6%; transform: none;
+    background: #a9772f; border: 3px solid #7c5520; border-radius: 999px; box-shadow: none;
+    padding: 0; display: flex; align-items: center; justify-content: center; gap: 1.4%;
+  }
+  .gameStage .lvlStar { font-size: 5vh; }
+  .gameStage #score {
+    position: absolute; left: 84%; top: 3.2%; width: 13.5%; height: 10.4%; transform: none;
+    display: flex; align-items: center; justify-content: center; font-size: 3vh;
+    border-radius: 16px; border-width: 3px;
+  }
+  .gameStage #panel {
+    position: absolute; inset: 0; width: 100%; height: 100%; transform: none;
+    background: transparent; border: none; box-shadow: none; padding: 0; pointer-events: none;
+  }
+  .gameStage #panel::before, .gameStage #panel::after { content: none; }
+  .gameStage #prompt {
+    display: block; position: absolute; left: 27%; top: 23%; width: 50%; text-align: center;
+    font-size: 2.7vh; font-weight: 700; color: #5b4327; text-shadow: 0 2px 2px rgba(255,255,255,.6);
+    z-index: 9; transform: none;
+  }
+  .gameStage #target {
+    position: absolute; left: 42%; top: 30%; width: 22%; height: 19%; right: auto; bottom: auto;
+    min-height: 0; background: transparent; font-size: 14vh; font-weight: 800; overflow: visible;
+    z-index: 9; text-shadow: 0 3px 0 #fff, 0 0 10px rgba(255,255,255,.85), 0 6px 14px rgba(0,0,0,.25);
+  }
+  .gameStage #target .itemRow { gap: 1vw; max-width: 100%; }
+  .gameStage #target .glyph { font-size: 11vh; }
+  .gameStage #target .bigletter { font-size: 14vh; }
+  .gameStage #target .arrow { font-size: 5vh; }
+  .gameStage #target .swatch { width: 10vh; height: 10vh; }
+  .gameStage #keyboard {
+    position: absolute; left: 20.5%; top: 55%; width: 57.5%; height: auto; bottom: auto; transform: none;
+  }
+  .gameStage #choices {
+    position: absolute; left: 18%; top: 56%; width: 64%; bottom: auto;
+  }
+  /* light up the painted "Great job!" / "Oops!" cards based on the answer */
+  #fbGood, #fbBad {
+    display: none;   /* this background has no side cards; the reaction video shows feedback */
+    position: absolute; border-radius: 18px; pointer-events: none; z-index: 7;
+    background: rgba(18,22,48,.42);
+    transition: background .25s ease, box-shadow .25s ease, transform .25s ease;
+  }
+  #fbGood { left: 78%; top: 15.5%; width: 19.5%; height: 25.5%; }
+  #fbBad  { left: 78%; top: 43%;   width: 19.5%; height: 24%; }
+  #fbGood.lit { background: rgba(255,255,255,0); box-shadow: 0 0 30px 8px rgba(255,210,70,.95), inset 0 0 24px rgba(255,235,150,.5);
+    transform: scale(1.05); animation: cardPulse 1s ease-in-out infinite alternate; }
+  #fbBad.lit  { background: rgba(255,255,255,0); box-shadow: 0 0 30px 8px rgba(120,180,255,.9), inset 0 0 24px rgba(180,215,255,.5);
+    transform: scale(1.05); animation: cardPulse 1s ease-in-out infinite alternate; }
+  @keyframes cardPulse { from { filter: brightness(1); } to { filter: brightness(1.12); } }
+
+  /* animated reaction video that pops in on each answer */
+  #reactionBox {
+    position: fixed; left: 50%; top: 38%; transform: translate(-50%,-50%) scale(.55);
+    width: 42vw; aspect-ratio: 16 / 9; border-radius: 22px; overflow: hidden; border: 6px solid var(--gold);
+    box-shadow: 0 18px 50px rgba(0,0,0,.55); background: #000;
+    z-index: 8; opacity: 0; pointer-events: none;
+    transition: opacity .25s ease, transform .32s cubic-bezier(.2,1.3,.4,1);
+  }
+  #reactionBox.show { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+  #reactionVid { display: block; width: 100%; height: 100%; object-fit: cover; }
+  /* clean caption band that covers the video's baked-in text */
+  #reactionCaption {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 27%;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 2.6vh; color: var(--blue);
+    background: #f7eccb; border-top: 4px solid var(--gold); padding: 0 4%;
+  }
+  .gameStage .hotspot {
+    position: absolute; background: transparent; border: 2px solid transparent; cursor: pointer;
+    border-radius: 50%; padding: 0; box-shadow: none; color: transparent; font-size: 0;
+  }
+  .gameStage #logo  { left: 1%; top: 1.5%; width: 33%; height: 25%; border-radius: 14px; }
+  .gameStage #exit  { left: 1%;  top: 86.5%; width: 9%; height: 12%; }
+  .gameStage #sound { left: 90%; top: 86.5%; width: 9%; height: 12%; border-radius: 50%; transition: background .2s, box-shadow .2s; }
+  /* blue (painted) = audio ON; red = muted */
+  .gameStage #sound.muted { background: rgba(214,40,40,.74);
+    box-shadow: inset 0 0 0 5px rgba(190,25,25,.95), 0 0 16px rgba(214,40,40,.6); }
+
+  /* ===== MOBILE / portrait layout only — desktop is untouched ===== */
+  @media (max-width: 760px) {
+    /* scrollable column, no side character cluttering the frame */
+    #start { align-items: flex-start; justify-content: flex-start; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .homeChar { display: none; }
+    .homeUI { margin-left: 0; gap: 1.4vh; max-height: none; width: 100vw; padding: 2vh 0 22vh; box-sizing: border-box; }
+    .homeTitle { font-size: 13vw; }
+    .homeRibbon { font-size: 3.6vw; padding: .6vh 3.2vw; border-width: 2px; }
+    .homeCard { width: 92vw; max-width: 92vw; box-sizing: border-box; padding: 2.4vh 4vw; gap: 1.6vh; border-width: 4px; }
+
+    /* name field: centered label over a full-width input */
+    .homeCard .nameRow { flex-direction: column; gap: 1vh; width: 100%; font-size: 5vw; }
+    .homeCard .nameRow label::before { content: "✦ "; color: var(--gold-d); }
+    .homeCard .nameRow label::after  { content: " ✦"; color: var(--gold-d); }
+    #start #nameInput { width: 100%; box-sizing: border-box; font-size: 6vw; text-align: center; padding: 1.6vh 4vw; border-radius: 14px; }
+
+    /* one column of the 3-D buttons on phones */
+    .btnGrid { grid-template-columns: 1fr; width: 92vw; max-width: 92vw; gap: 1.5vh; }
+    #start .btnGrid .modeBtn { min-height: 12vh; padding: 1.6vh 4vw; border-radius: 20px; }
+    #start .btnGrid .modeBtn .title { font-size: 6.6vw; margin-bottom: .4vh; }
+    #start .btnGrid .modeBtn .sub   { font-size: 4vw; }
+    #start .btnGrid .modeBtn .icons { font-size: 5.4vw; }
+    #start .modeBtn[data-mode="both"] .title { font-size: 5.6vw; }
+    #start .modeBtn[data-mode="free"] .sub   { font-size: 6vw; }
+
+    .homeFoot { width: 92vw; max-width: 92vw; bottom: .8vh; gap: 3vw; padding: 1vh 3vw; white-space: normal; }
+    .homeFoot .footText { flex-direction: column; align-items: center; gap: .2vh; text-align: center; }
+    .homeFoot .footText b  { font-size: 3.4vw; white-space: nowrap; }
+    .homeFoot .footText em { font-size: 2.9vw; white-space: nowrap; }
+    .homeFoot .footIcon { font-size: 5.2vw; }
+
+    /* ===================== MOBILE GAME VIEW (all modes except Free Play) ===================== */
+    /* painted seaside video fills the screen; landscape interface PNG is hidden */
+    #game .gameStage .bg { display: none; }
+    #game:not(.free-mode) #freeBg { display: block; }
+    #game #freeVignette { display: none; }
+    #game:not(.free-mode) #reactionBox { display: none !important; }   /* the band gives feedback instead */
+    #game.free-mode #gameRibbon, #game.free-mode #mfb { display: none; }
+
+    /* stars (left) + score (right) as pills */
+    #game #starbar { left: 4%; right: auto; top: 2.2%; width: auto; height: auto; transform: none;
+      background: #fff6e0; border: 3px solid var(--gold); border-radius: 999px; padding: .7vh 3vw; gap: 1.4vw;
+      box-shadow: 0 4px 10px rgba(60,45,15,.3); }
+    #game #starbar .lvlStar { font-size: 3vh; }
+    #game #score { left: auto; right: 4%; top: 2.2%; width: auto; height: auto; transform: none;
+      background: var(--blue); color: #fff; border: 3px solid var(--blue-d); border-radius: 999px;
+      padding: .7vh 4vw; font-size: 2.6vh; font-weight: 800; box-shadow: 0 4px 10px rgba(60,45,15,.3); }
+
+    /* ribbon */
+    #gameRibbon { display: flex; align-items: center; justify-content: center; position: absolute;
+      left: 50%; top: 9.4%; transform: translateX(-50%); white-space: nowrap; z-index: 9;
+      background: #f6d9a8; border: 3px solid var(--gold); border-radius: 999px; padding: .6vh 4vw;
+      font-family: 'Baloo 2'; font-weight: 700; color: #7a5a2e; font-size: 3.5vw;
+      box-shadow: 0 4px 10px rgba(60,45,15,.3); }
+
+    /* the big parchment card with seaside decorations */
+    #game #panel { position: absolute; inset: auto; left: 5%; right: 5%; top: 14%; width: auto; height: 45%;
+      background: linear-gradient(#f7e9c5, #efdcab); border: 7px solid var(--gold); border-radius: 28px;
+      box-shadow: 0 12px 28px rgba(60,45,15,.4), inset 0 0 0 3px rgba(255,255,255,.5); overflow: hidden; }
+    #game #panel::before { content: '🐚'; position: absolute; left: 5%; bottom: 4%; font-size: 13vw; opacity: .95; transform: rotate(-8deg); }
+    #game #panel::after  { content: '🌿'; position: absolute; right: 6%; bottom: 4%; font-size: 13vw; opacity: .95; }
+    #game #panel #prompt { position: absolute; left: 6%; right: 6%; top: 7%; width: auto; text-align: center;
+      font-family: 'Baloo 2'; font-weight: 800; font-size: 6vw; line-height: 1.1; color: #5b4327;
+      text-shadow: 0 2px 2px rgba(255,255,255,.6); z-index: 2; }
+    #game #panel #target { position: absolute; left: 0; right: 0; top: 32%; bottom: 4%; width: 100%; height: auto;
+      display: flex; align-items: center; justify-content: center; font-size: 30vw; z-index: 2; }
+    #game #panel #target .bigletter { font-size: 30vw; }
+    #game #panel #target .glyph { font-size: 24vw; }
+    #game #panel #target .itemRow { gap: 3vw; }
+    #game #panel #target .arrow { font-size: 9vw; }
+    #game #panel #target .swatch { width: 22vw; height: 22vw; }
+    #game #panel #target .spellRow { gap: 2vw; }
+    #game #panel #target .spellRow .sl { font-size: 12vw; }
+    #game.seq-mode #panel #prompt { font-size: 5.4vw; }
+
+    /* keyboard: letters-only (or numbers-only) — no number row / modifier keys */
+    #game #keyboard { position: absolute; left: 2.5%; right: 2.5%; top: auto; bottom: 15.5%; width: auto; transform: none;
+      padding: 1.4vh 2vw; gap: 1vh; border-radius: 18px; }
+    #game #keyboard .krow { gap: 1.4vw; }
+    #game #keyboard .key { height: 6.2vh; font-size: 2.7vh; border-radius: 10px; }
+    #game #keyboard .key.mod { display: none; }                                  /* hide Tab/Caps/Shift/etc. */
+    #game #keyboard .krow:nth-child(5) { display: none; }                        /* the all-modifier row */
+    #game:not(.num-answer) #keyboard .krow:nth-child(1) { display: none; }        /* hide digits for letter rounds */
+    #game.num-answer #keyboard .krow:nth-child(2),
+    #game.num-answer #keyboard .krow:nth-child(3),
+    #game.num-answer #keyboard .krow:nth-child(4) { display: none; }              /* hide letters for number rounds */
+
+    /* number/category choice chips sit just above the band */
+    #game #choices { position: absolute; bottom: 16%; left: 2%; width: 96%; gap: 3vw; }
+
+    /* bottom feedback / hint band */
+    #mfb { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+      position: absolute; left: 14%; right: 14%; bottom: 1.6%; z-index: 9; min-height: 8vh; padding: 1vh 3vw;
+      background: linear-gradient(#f7e4b4, #e7c884); border: 4px solid var(--gold); border-radius: 22px;
+      box-shadow: 0 6px 16px rgba(60,45,15,.32), inset 0 0 0 3px rgba(255,255,255,.45);
+      font-family: 'Baloo 2'; color: #6e4f24; line-height: 1.1; }
+    #mfb::before { content: '🎈'; position: absolute; left: 4%; bottom: 12%; font-size: 6.5vw; }
+    #mfb::after  { content: '🎈'; position: absolute; right: 4%; bottom: 12%; font-size: 6.5vw; }
+    #mfb b { font-weight: 800; font-size: 4.6vw; }
+    #mfb span { display: block; font-size: 3.4vw; color: #6e4f24; }
+    #mfb b.hintline { color: #6e4f24; font-size: 4.2vw; }
+    #mfb.good b { color: var(--blue); }
+    #mfb.bad b  { color: #c0392b; }
+
+    /* round home + sound buttons in the bottom corners */
+    #game #exit, #game #sound { position: absolute; bottom: 1.8%; top: auto; width: 13vw; height: 13vw; min-width: 0;
+      border-radius: 50%; background: var(--blue); border: 3px solid var(--blue-d);
+      box-shadow: 0 5px 12px rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 6vw; z-index: 11; }
+    #game #exit  { left: 3%;  right: auto; }
+    #game #sound { right: 3%; left: auto; }
+    #game #exit::after  { content: '🏠'; }
+    #game #sound::after { content: '🔊'; }
+    #game #sound.muted { background: #c0392b; border-color: #9a261a; box-shadow: 0 5px 12px rgba(0,0,0,.4); }
+    #game #sound.muted::after { content: '🔇'; }
+
+    /* keep the celebratory popups from cluttering the small screen */
+    #game #buddy { display: none; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- START SCREEN: the painted home menu with invisible clickable hotspots -->
+  <div id="start">
+    <video id="bgvid" autoplay muted playsinline>
+      <source src="home_bg.mp4" type="video/mp4">
+    </video>
+    <div class="homeUI">
+      <div class="homeTitle">Yako <span>by the Sea</span></div>
+      <div class="homeRibbon">🐚 Have fun counting &amp; spelling! ⭐</div>
+      <div class="homeCard">
+        <div class="nameRow">
+          <label for="nameInput">My name is</label>
+          <input id="nameInput" type="text" maxlength="20" autocomplete="off" spellcheck="false" placeholder="type your name">
+        </div>
+        <div class="btnGrid">
+          <button class="modeBtn" data-mode="letters" aria-label="Letters"><span class="title">Letters</span><span class="sub">A B C</span></button>
+          <button class="modeBtn" data-mode="numbers" aria-label="Numbers"><span class="title">Numbers</span><span class="sub">1 2 3</span></button>
+          <button class="modeBtn" data-mode="both"    aria-label="Letters and Numbers"><span class="title">Letters &amp; Numbers</span><span class="sub">A 1 B 2</span></button>
+          <button class="modeBtn" data-mode="shapes"  aria-label="Shapes"><span class="title">Shapes</span><span class="icons">🔺 ■ ♥</span></button>
+          <button class="modeBtn" data-mode="colors"  aria-label="Colors"><span class="title">Colors</span><span class="icons">🔴 🟢 🔵</span></button>
+          <button class="modeBtn" data-mode="animals" aria-label="Animals"><span class="title">Animals</span><span class="icons">🐶 🐼 🦁</span></button>
+          <button class="modeBtn" data-mode="spelling" aria-label="Spelling"><span class="title">Spelling</span><span class="sub">CAT DOG</span></button>
+          <button class="modeBtn" data-mode="free"    aria-label="Free Play"><span class="title">Free Play</span><span class="sub">🎉</span></button>
+          <button class="modeBtn" data-mode="counting" aria-label="Counting"><span class="title">Counting</span><span class="sub">1 2 3</span></button>
+          <button class="modeBtn" data-mode="sounds"   aria-label="Letter Sounds"><span class="title">Letter Sounds</span><span class="icons">🔊 A a</span></button>
+          <button class="modeBtn" data-mode="countobj" aria-label="How Many"><span class="title">How Many?</span><span class="icons">🐚 🐚 🐚</span></button>
+          <button class="modeBtn" data-mode="math"     aria-label="Add and Subtract"><span class="title">Add &amp; Subtract</span><span class="icons">🦀 ➕ 🦀</span></button>
+        </div>
+        <div class="langBar">
+          <div class="toggleRow" id="langRow" aria-label="Voice language">
+            <button class="flagBtn" data-lang="en-GB" title="English" aria-label="English">🇬🇧</button>
+            <button class="flagBtn" data-lang="fr-FR" title="Français" aria-label="French">🇫🇷</button>
+            <button class="flagBtn" data-lang="es-ES" title="Español" aria-label="Spanish">🇪🇸</button>
+          </div>
+          <div class="toggleRow" id="personaRow" aria-label="Voice character">
+            <button class="personaBtn" data-persona="mom" title="Mom" aria-label="Mom voice">👩</button>
+            <button class="personaBtn" data-persona="dad" title="Dad" aria-label="Dad voice">👨</button>
+            <button class="personaBtn" data-persona="grandpa" title="Grandpa" aria-label="Grandpa voice">👴</button>
+            <button class="personaBtn" data-persona="grandma" title="Grandma" aria-label="Grandma voice">👵</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="homeChar" role="img" aria-label="Yako waving with his puppy"></div>
+    <div class="homeFoot"><span class="footIcon">⭐</span><span class="footText"><b>Collect 5 stars to win a level!</b><em>Tip: turn your volume up &amp; press F11.</em></span><span class="footIcon">🐚</span></div>
+  </div>
+
+  <!-- GAME: the painted interface illustration with live overlays -->
+  <div id="game">
+    <video id="freeBg" src="home_bg.mp4" muted loop playsinline preload="auto"></video>
+    <div id="freeVignette"></div>
+    <div id="flash"></div>
+    <div class="gameStage">
+      <video id="gameBg" class="bg" src="gameui_anim.mp4" poster="gameui.png" muted loop autoplay playsinline preload="auto"></video>
+      <div id="starbar"></div>
+      <div id="score">⭐ 0</div>
+      <div id="gameRibbon">🐚 Have fun counting &amp; spelling! ⭐</div>
+      <div id="panel"><div id="prompt"></div><div id="target"></div></div>
+      <div id="choices"></div>
+      <div id="keyboard"></div>
+      <div id="mfb"></div>
+      <div id="fbGood"></div>
+      <div id="fbBad"></div>
+      <button id="logo" class="hotspot" title="Back to menu" aria-label="Back to menu"></button>
+      <button id="exit" class="hotspot" title="Menu" aria-label="Menu"></button>
+      <button id="sound" class="hotspot" title="Sound on/off" aria-label="Sound"></button>
+    </div>
+    <div id="yako">👦🐕</div>
+    <div id="buddy"></div>
+    <div id="freecard"><img class="freecardImg" src="freepanel.png" alt=""><div id="freeLetter"></div></div>
+    <div id="hint">Look closely and find the key!</div>
+    <div id="reactionBox">
+      <video id="reactionVid" src="reactions.mp4" playsinline preload="auto"></video>
+      <div id="reactionCaption"></div>
+    </div>
+    <div id="win"></div>
+  </div>
+
+<script src="data/strings.en.js"></script>
+<script src="data/strings.fr.js"></script>
+<script src="data/strings.es.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/audio.js"></script>
+<script>
+(function () {
+  // ---------- Elements ----------
+  const startScreen = document.getElementById('start');
+  const game     = document.getElementById('game');
+  const promptEl  = document.getElementById('prompt');
+  const targetEl  = document.getElementById('target');
+  const scoreEl   = document.getElementById('score');
+  const exitBtn   = document.getElementById('exit');
+  const soundBtn  = document.getElementById('sound');
+  const hintEl    = document.getElementById('hint');
+  const flashEl   = document.getElementById('flash');
+  const nameInput = document.getElementById('nameInput');
+  const choicesEl = document.getElementById('choices');
+  const buddyEl   = document.getElementById('buddy');
+  const starbarEl = document.getElementById('starbar');
+  const keyboardEl= document.getElementById('keyboard');
+  const fbGoodEl  = document.getElementById('fbGood');
+  const fbBadEl   = document.getElementById('fbBad');
+  const reactionVid = document.getElementById('reactionVid');
+
+  // Reaction video segments: [start, end] seconds within reactions.mp4
+  const REACT = { good: [0.2, 1.9], bad: [2.4, 4.0] };
+  let reactionTimer = null;
+  const reactionBox = document.getElementById('reactionBox');
+  const reactionCaption = document.getElementById('reactionCaption');
+  const mfb = document.getElementById('mfb');
+  function mfbHint() { if (mfb) { mfb.className = ''; mfb.innerHTML = '<b class="hintline">Look closely and find the key!</b>'; } }
+  function playReaction(ok) {
+    if (mfb) {
+      mfb.className = 'show ' + (ok ? 'good' : 'bad');
+      mfb.innerHTML = ok ? '<b>Great job!</b><span>You found it!</span>'
+                         : "<b>Oops!</b><span>Let's try that again!</span>";
+    }
+    if (!reactionVid || !reactionBox) return;
+    if (reactionCaption) reactionCaption.textContent = ok ? 'Great job!' : "Oops! Let's try that again!";
+    const seg = ok ? REACT.good : REACT.bad;
+    try { reactionVid.currentTime = seg[0]; } catch (e) {}
+    reactionVid.muted = true;                  // silent — Yako's voice does the talking
+    reactionBox.classList.add('show');
+    reactionVid.play().catch(() => {});
+    clearTimeout(reactionTimer);
+    reactionTimer = setTimeout(() => {
+      reactionVid.pause();
+      reactionBox.classList.remove('show');
+    }, (seg[1] - seg[0]) * 1000);
+  }
+  function hideReaction() { clearTimeout(reactionTimer); if (reactionVid) reactionVid.pause(); if (reactionBox) reactionBox.classList.remove('show'); }
+  const winEl     = document.getElementById('win');
+  const yakoEl    = document.getElementById('yako');
+  const freeLetterEl = document.getElementById('freeLetter');
+
+  // Carmel scene backgrounds used in Free Play (rotate through them)
+  const FREE_SCENES = ['scene1.png','scene2.png','scene3.png','scene4.png','scene5.png','scene6.png'];
+  let freeSceneIdx = 0, freeKeyCount = 0;
+  function setFreeScene(i) {
+    freeSceneIdx = ((i % FREE_SCENES.length) + FREE_SCENES.length) % FREE_SCENES.length;
+    game.style.background = "url('" + FREE_SCENES[freeSceneIdx] + "') center / cover no-repeat";
+  }
+
+  // Use the real Yako artwork if present; otherwise fall back to an emoji.
+  function makeImg(src, cls, emoji) {
+    const img = document.createElement('img');
+    img.className = cls; img.src = src; img.alt = 'Yako';
+    img.onerror = () => { const s = document.createElement('span'); s.className = cls; s.textContent = emoji || '👦'; img.replaceWith(s); };
+    return img;
+  }
+  function makeYako(cls, emoji) { return makeImg('yako.png', cls, emoji || '👦🐕'); }
+  function fillYako(el, cls, emoji) { if (!el) return; el.innerHTML = ''; el.appendChild(makeYako(cls, emoji)); }
+
+  const colors = ['#FF3B30','#FF9500','#FFCC00','#34C759','#00C7BE',
+                  '#30B0C7','#007AFF','#5856D6','#AF52DE','#FF2D55'];
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+
+  // ---------- State ----------
+  let mode = 'letters';
+  let locked = false;
+  let roundTimer = null;
+  let lastTarget = null;
+  let playerName = '';
+  let answerStyle = 'letter';
+
+  // level / scoring / timing
+  const STARS_PER_LEVEL = 5;
+  let level = 1;
+  let levelStars = 0;
+  let levelStartTime = 0;
+  let levelElapsed = 0;
+  let totalStars = 0;
+  let winTimer = null, fbTimer = null;
+  let hintTimer = null, hintStage = 0;   // 0 = hidden, 1 = 9-key cluster, 2 = exact key revealed
+
+  // ---------- localStorage helpers ----------
+  function getNum(k) { try { const v = localStorage.getItem(k); return v == null ? null : parseFloat(v); } catch (e) { return null; } }
+  function setNum(k, v) { try { localStorage.setItem(k, String(v)); } catch (e) {} }
+  function fmt(sec) { return (Math.round(sec * 10) / 10).toFixed(1); }
+
+  // ---------- Modules (js/i18n.js + js/audio.js) ----------
+  // Local aliases so the game code below keeps its familiar names.
+  const I = window.YAKO.i18n, A = window.YAKO.audio;
+  const L = I.L, langPrefix = I.langPrefix,
+        locName = I.locName, locLetter = I.locLetter, locCreat = I.locCreat, phonFor = I.phonFor;
+  const ensureAudio = A.ensureAudio, stopAllSounds = A.stopAllSounds,
+        playApplause = A.playApplause, playChime = A.playChime,
+        playTryAgainTone = A.playTryAgainTone, playNote = A.playNote,
+        startBarkLoop = A.startBarkLoop, stopBarkLoop = A.stopBarkLoop,
+        speak = A.speak, speakName = A.speakName, say = A.say, playPersona = A.playPersona,
+        chClip = A.chClip, isNum = A.isNum, nextCheer = A.nextCheer, pickVoice = A.pickVoice;
+
+  // ---------- Challenge data ----------
+  const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const NUMBERS = "0123456789".split("");
+  const COLORS_DATA = [
+    {name:'Red',    letter:'R', hex:'#FF3B30'},
+    {name:'Orange', letter:'O', hex:'#FF9500'},
+    {name:'Yellow', letter:'Y', hex:'#FFCC00'},
+    {name:'Green',  letter:'G', hex:'#34C759'},
+    {name:'Blue',   letter:'B', hex:'#007AFF'},
+    {name:'Purple', letter:'P', hex:'#AF52DE'},
+    {name:'Pink',   letter:'P', hex:'#FF2D55'},
+    {name:'Brown',  letter:'B', hex:'#A2845E'},
+  ];
+  const SHAPES_DATA = [
+    {name:'Circle',   letter:'C', glyph:'⬤'},
+    {name:'Square',   letter:'S', glyph:'⬛'},
+    {name:'Triangle', letter:'T', glyph:'🔺'},
+    {name:'Heart',    letter:'H', glyph:'❤️'},
+    {name:'Star',     letter:'S', glyph:'⭐'},
+    {name:'Diamond',  letter:'D', glyph:'💎'},
+  ];
+  const ANIMALS_DATA = [
+    {name:'Cat',     letter:'C', glyph:'🐱'},
+    {name:'Dog',     letter:'D', glyph:'🐶'},
+    {name:'Elephant',letter:'E', glyph:'🐘'},
+    {name:'Frog',    letter:'F', glyph:'🐸'},
+    {name:'Giraffe', letter:'G', glyph:'🦒'},
+    {name:'Horse',   letter:'H', glyph:'🐴'},
+    {name:'Lion',    letter:'L', glyph:'🦁'},
+    {name:'Monkey',  letter:'M', glyph:'🐵'},
+    {name:'Owl',     letter:'O', glyph:'🦉'},
+    {name:'Pig',     letter:'P', glyph:'🐷'},
+    {name:'Rabbit',  letter:'R', glyph:'🐰'},
+    {name:'Snake',   letter:'S', glyph:'🐍'},
+    {name:'Tiger',   letter:'T', glyph:'🐯'},
+    {name:'Zebra',   letter:'Z', glyph:'🦓'},
+  ];
+
+  // Spelling words grouped by length (used by the Spelling sub-game)
+  const WORDS = {
+    3: ['CAT','DOG','PIG','BAT','SUN','HAT','BED','CUP','BUS','FOX','COW','HEN','BEE','ANT','OWL','BUG','MAP','NET','PEN','TOP','CAR','CAP','JAR','BOX'],
+    4: ['FISH','BIRD','FROG','STAR','MOON','TREE','CAKE','DUCK','BOAT','LION','BEAR','BALL','DOOR','SHIP','GOAT','FROG','KITE','LEAF','NEST','RAIN'],
+    5: ['APPLE','HOUSE','TIGER','HORSE','TRAIN','MOUSE','SNAKE','BREAD','CLOUD','SHEEP','PLANT','BEACH','WHALE','CHAIR','GRAPE'],
+    6: ['BANANA','FLOWER','ORANGE','PURPLE','TURTLE','MONKEY','ROCKET','PARROT','RABBIT','PENCIL','GARDEN','PUPPET']
+  };
+  // difficulty grows every 3 levels
+  function spellLenForLevel() { return Math.min(3 + Math.floor((level - 1) / 3), 6); }
+  function countLenForLevel() { return Math.min(2 + Math.floor((level - 1) / 3), 5); }
+
+  let challenge = null;
+
+  function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  function pickDistinct(data, target, n) {
+    const others = shuffle(data.filter(d => d.name !== target.name)).slice(0, n - 1);
+    return shuffle(others.concat([target]));
+  }
+  function picHTML(item, kind) {
+    return kind === 'color'
+      ? '<div class="swatch" style="background:' + item.hex + '"></div>'
+      : '<span class="glyph">' + item.glyph + '</span>';
+  }
+  function renderItemWithLetter(item, kind, letter) {
+    // Show the picture AND its starting letter (in the current language) right away.
+    letter = letter || item.letter;
+    targetEl.style.color = '';
+    targetEl.innerHTML =
+      '<div class="itemRow">' + picHTML(item, kind) +
+      '<span class="arrow">&#10142;</span>' +
+      '<span class="bigletter" style="color:' + (kind === 'color' ? item.hex : 'var(--blue)') + '">' +
+      letter + '</span></div>';
+  }
+  function renderChoices(opts, kind) {
+    game.classList.add('choices-mode');
+    choicesEl.innerHTML = '';
+    opts.forEach(o => {
+      const div = document.createElement('div');
+      div.className = 'choice';
+      div.dataset.number = o.number;
+      div.innerHTML = '<div class="num">' + o.number + '</div>' +
+                      picHTML(o.item, kind) + '<div class="nm">' + o.item.name + '</div>';
+      div.addEventListener('click', () => tryAnswer(String(o.number)));
+      choicesEl.appendChild(div);
+    });
+  }
+  function highlightChoice(num, ok) {
+    const el = choicesEl.querySelector('.choice[data-number="' + num + '"]');
+    if (el) el.classList.add(ok ? 'correct' : 'wrong');
+  }
+
+  function categoryChallenge(data, kind) {
+    const item = pick(data);
+    const lname = locName(item.name), lletter = locLetter(item.name);
+    if (answerStyle === 'number') {
+      const opts = pickDistinct(data, item, 3).map((it, i) => ({ item: it, number: i + 1 }));
+      const right = opts.find(o => o.item.name === item.name);
+      return { answer: String(right.number), kind, name: lname, style: 'number', choices: opts,
+        render() { targetEl.style.color = ''; targetEl.innerHTML = picHTML(item, kind); renderChoices(opts, kind); },
+        revealAnswer() {} };
+    }
+    return { answer: lletter, kind, name: lname, style: 'letter',
+      render() { renderItemWithLetter(item, kind, lletter); },
+      revealAnswer() {
+        const bl = targetEl.querySelector('.bigletter');
+        if (bl) { bl.textContent = lletter; bl.classList.remove('answerSlot');
+          bl.style.color = (kind === 'color' ? item.hex : 'var(--blue)'); }
+      } };
+  }
+  // ----- Sequence games (Spelling / Counting): find each letter/digit in order -----
+  function renderSeqCard(seq, revealed) {
+    targetEl.style.color = '';
+    targetEl.innerHTML = '<div class="spellRow">' + seq.map((ch, i) => {
+      const cls = i < revealed ? 'sl done' : (i === revealed ? 'sl now' : 'sl');
+      return '<span class="' + cls + '">' + ch + '</span>';
+    }).join('') + '</div>';
+  }
+  function seqChallenge(word, kind) {
+    const seq = word.split('');
+    return {
+      style: 'seq', word: word, seq: seq, idx: 0, answer: seq[0], kind: kind, name: word,
+      render() { renderSeqCard(this.seq, this.idx); },
+      revealAll() { renderSeqCard(this.seq, this.seq.length); }
+    };
+  }
+  function buildSpell() { return seqChallenge(pick(WORDS[spellLenForLevel()] || WORDS[3]), 'letter'); }
+  function buildCount() {
+    const len = countLenForLevel();
+    let s = String(1 + Math.floor(Math.random() * 9));            // first digit 1-9
+    for (let i = 1; i < len; i++) s += String(Math.floor(Math.random() * 10));
+    return seqChallenge(s, 'number');
+  }
+
+  // ----- Letter Sounds (phonics): letter + its sound + a keyword picture -----
+  function buildSounds() {
+    const Lr = pick(LETTERS); const pf = phonFor(Lr);   // [word, emoji, (sound for en)]
+    const word = pf[0], emoji = pf[1], snd = pf[2] || '';
+    const connector = langPrefix() === 'fr' ? ' comme ' : (langPrefix() === 'es' ? ' — ' : ' is for ');
+    return { answer: Lr, kind: 'letter', name: 'snd_' + Lr, style: 'sound', sound: snd, word: word, emoji: emoji,
+      render() { targetEl.style.color = '';
+        targetEl.innerHTML = '<div class="phonRow"><span class="phonLetter">' + Lr + '</span>' +
+          '<span class="phonPic">' + emoji + '</span></div>' +
+          '<div class="phonWord">' + Lr + connector + word + '</div>'; },
+      revealAnswer() {} };
+  }
+  // ----- How Many? (count the sea creatures) and Add & Subtract -----
+  const SEA = [['🐚','shells'],['🦀','crabs'],['⭐','starfish'],['🐟','fish'],['🐙','octopuses'],['🐬','dolphins']];
+  function objs(emoji, n) { let s = ''; for (let i = 0; i < n; i++) s += '<span class="cobj">' + emoji + '</span>'; return s; }
+  function buildCountObjects() {
+    const n = 1 + Math.floor(Math.random() * 9);     // 1..9
+    const c = pick(SEA);
+    return { answer: String(n), kind: 'number', name: 'cnt_' + n + c[1], style: 'count', creatures: c[1],
+      render() { targetEl.style.color = ''; targetEl.innerHTML = '<div class="countObjRow">' + objs(c[0], n) + '</div>'; },
+      revealAnswer() {} };
+  }
+  function buildMath() {
+    const c = pick(SEA), e = c[0]; let a, b, res, op;
+    if (Math.random() < 0.5) {                        // addition, sum <= 9
+      a = 1 + Math.floor(Math.random() * 8); b = 1 + Math.floor(Math.random() * (9 - a)); res = a + b; op = '+';
+    } else {                                          // subtraction, result >= 1
+      a = 2 + Math.floor(Math.random() * 8); b = 1 + Math.floor(Math.random() * (a - 1)); res = a - b; op = '−';
+    }
+    return { answer: String(res), kind: 'number', name: 'math_' + a + op + b, style: 'math',
+      a: a, b: b, op: op, creature: c[1],
+      render() { targetEl.style.color = '';
+        targetEl.innerHTML = '<div class="mathRow"><span class="grp">' + objs(e, a) + '</span>' +
+          '<span class="mop">' + op + '</span><span class="grp">' + objs(e, b) + '</span>' +
+          '<span class="meq">=</span><span class="mq">?</span></div>'; },
+      revealAnswer() { const q = targetEl.querySelector('.mq'); if (q) { q.textContent = res; q.style.color = '#2bb673'; } } };
+  }
+
+  function buildChallenge() {
+    if (mode === 'sounds')   return buildSounds();
+    if (mode === 'countobj') return buildCountObjects();
+    if (mode === 'math')     return buildMath();
+    if (mode === 'spelling') return buildSpell();
+    if (mode === 'counting') return buildCount();
+    if (mode === 'colors')  return categoryChallenge(COLORS_DATA, 'color');
+    if (mode === 'shapes')  return categoryChallenge(SHAPES_DATA, 'shape');
+    if (mode === 'animals') return categoryChallenge(ANIMALS_DATA, 'animal');
+    const pool = mode === 'letters' ? LETTERS : mode === 'numbers' ? NUMBERS : LETTERS.concat(NUMBERS);
+    const ch = pick(pool);
+    return { answer: ch, kind: /[0-9]/.test(ch) ? 'number' : 'letter', name: ch, style: 'plain',
+      render() { targetEl.textContent = ch; targetEl.style.color = 'var(--blue)'; },
+      revealAnswer() { targetEl.textContent = ch; targetEl.style.color = 'var(--blue)'; } };
+  }
+
+  function newTarget() {
+    let next, tries = 0;
+    do { next = buildChallenge(); tries++; } while (next.name === lastTarget && tries < 8);
+    lastTarget = next.name;
+    challenge = next;
+    game.classList.toggle('num-answer', /^[0-9]$/.test(String(challenge.answer)));
+    choicesEl.innerHTML = '';
+    game.classList.remove('choices-mode');
+    clearFeedback();                 // both cards dim until they answer
+    next.render();
+    targetEl.style.transform = 'scale(1)';
+    hintStage = 0;
+    clearKeyHighlights();
+    scheduleHint();
+    announce();
+  }
+
+  function announce() {
+    const t = L(), cname = challenge.name, ans = challenge.answer, s = challenge.style;
+    // Letters/Numbers/Both: play the recorded "Find the letter/number X" clip if it exists, else synth.
+    if (s === 'plain') { playPersona(isNum(ans) ? 'find_num_' + ans : 'find_let_' + ans, t.find(ans), { rate: 0.95 }); return; }
+    if (s === 'letter') { playPersona('find_let_' + ans, t.starts(cname, ans), { rate: 0.95 }); return; }   // shapes/colors/animals
+    if (s === 'seq' && mode === 'spelling') { playPersona('find_let_' + ans, t.spell(challenge.word, ans), { rate: 0.95 }); return; }
+    let phrase;
+    if (s === 'seq')        phrase = (mode === 'spelling') ? t.spell(challenge.word, ans) : t.countIntro(challenge.word, ans);
+    else if (s === 'plain') phrase = t.find(ans);
+    else if (s === 'letter')phrase = t.starts(cname, ans);
+    else if (s === 'sound') phrase = t.sound(ans, challenge.word, challenge.sound);
+    else if (s === 'count') phrase = t.howMany(locCreat(challenge.creatures));
+    else if (s === 'math')  phrase = (challenge.op === '+') ? t.mathAdd(challenge.a, challenge.b, locCreat(challenge.creature))
+                                                            : t.mathSub(challenge.a, challenge.b, locCreat(challenge.creature));
+    else if (s === 'number')phrase = t.prompt.catNum;     // multiple-choice picker
+    else phrase = t.find(ans);
+    speakName(phrase, { rate: 0.95 });
+  }
+
+  // ---------- On-screen keyboard ----------
+  const KB = [
+    '1 2 3 4 5 6 7 8 9 0 ~Backspace',
+    '~Tab Q W E R T Y U I O P',
+    '~Caps A S D F G H J K L ~Enter',
+    '~Shift Z X C V B N M ~Shift',
+    '~Ctrl ~Alt ~Space ~Alt ~Ctrl'
+  ];
+  function buildKeyboard() {
+    keyboardEl.innerHTML = '';
+    KB.forEach(rowStr => {
+      const row = document.createElement('div');
+      row.className = 'krow';
+      rowStr.split(' ').forEach(tok => {
+        const k = document.createElement('div');
+        if (tok[0] === '~') {
+          const name = tok.slice(1);
+          k.className = 'key mod' + (name === 'Space' ? ' spacebar' : '');
+          k.textContent = name === 'Backspace' ? '⌫' : (name === 'Space' ? '' : name);
+        } else {
+          k.className = 'key active';
+          k.dataset.key = tok.toUpperCase();
+          k.textContent = tok.toUpperCase();
+        }
+        row.appendChild(k);
+      });
+      keyboardEl.appendChild(row);
+    });
+  }
+  function clearKeyHighlights() {
+    keyboardEl.querySelectorAll('.key').forEach(k => k.classList.remove('near', 'target', 'hit-correct', 'hit-wrong'));
+  }
+  // Hint stage 1: light up the 9 keys nearest the answer (answer is among them).
+  function nearKeysHint() {
+    keyboardEl.querySelectorAll('.key').forEach(k => k.classList.remove('near', 'target'));
+    const ansEl = keyboardEl.querySelector('.key[data-key="' + challenge.answer + '"]');
+    if (!ansEl) return;
+    const ar = ansEl.getBoundingClientRect(), ax = ar.left + ar.width / 2, ay = ar.top + ar.height / 2;
+    [...keyboardEl.querySelectorAll('.key.active')].map(k => {
+      const r = k.getBoundingClientRect();
+      const dx = r.left + r.width / 2 - ax, dy = r.top + r.height / 2 - ay;
+      return { k, d: dx * dx + dy * dy };
+    }).sort((a, b) => a.d - b.d).slice(0, 9).forEach(o => o.k.classList.add('near'));
+  }
+  // Hint stage 2: reveal the exact key + show the letter/number in the panel.
+  function revealAnswerKey() {
+    keyboardEl.querySelectorAll('.key').forEach(k => k.classList.remove('near'));
+    const k = keyboardEl.querySelector('.key[data-key="' + challenge.answer + '"]');
+    if (k) k.classList.add('target');
+    if (challenge.revealAnswer) challenge.revealAnswer();
+  }
+  function clearHintTimer() { clearTimeout(hintTimer); hintTimer = null; }
+  // Escalating help: after 5s idle show the 9-key cluster, then after 4 more
+  // idle seconds reveal the exact key & the answer. Each keypress restarts the
+  // current countdown (so it only helps when the child is stuck, not guessing).
+  function scheduleHint() {
+    clearHintTimer();
+    if (!challenge || mode === 'free' || challenge.style === 'number' || locked || hintStage >= 2) return;
+    const delay = hintStage === 0 ? 5000 : 4000;
+    hintTimer = setTimeout(() => {
+      if (hintStage === 0) { hintStage = 1; nearKeysHint(); scheduleHint(); }
+      else if (hintStage === 1) { hintStage = 2; revealAnswerKey(); }
+    }, delay);
+  }
+  function flashKey(ch, ok) {
+    const k = keyboardEl.querySelector('.key[data-key="' + ch + '"]');
+    if (k) { k.classList.remove('target'); k.classList.add(ok ? 'hit-correct' : 'hit-wrong');
+      setTimeout(() => k.classList.remove('hit-correct', 'hit-wrong'), 650); }
+  }
+  keyboardEl.addEventListener('click', e => {
+    const k = e.target.closest('.key.active');
+    if (!k || mode === 'free') return;
+    tryAnswer(k.dataset.key);
+  });
+
+  // ---------- Celebration visuals ----------
+  function confetti() {
+    for (let i = 0; i < 60; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.style.background = pick(colors);
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.top = (-10 - Math.random() * 20) + 'vh';
+      c.style.animationDelay = (Math.random() * 0.3) + 's';
+      game.appendChild(c);
+      setTimeout(() => c.remove(), 2000);
+    }
+  }
+  const BUDDY_GESTURES = ['👏', '👍', '🤜', '🙌', '🎉', '✌️'];
+  let buddyTimer = null;
+  let buddyFace = '👦';
+  function showBuddy() {
+    const side = Math.random() < 0.5 ? 'left' : 'right';
+    const gesture = pick(BUDDY_GESTURES);
+    buddyEl.className = 'buddy ' + side;
+    buddyEl.innerHTML = '';
+    buddyEl.appendChild(makeImg('yako_cheer.png', 'buddyFace', '👦'));
+    const g = document.createElement('span'); g.className = 'buddyGesture'; g.textContent = gesture;
+    buddyEl.appendChild(g);
+    void buddyEl.offsetWidth;
+    buddyEl.classList.add('in');
+    clearTimeout(buddyTimer);
+    buddyTimer = setTimeout(() => buddyEl.classList.remove('in'), 2400);
+  }
+  function hideBuddy() { clearTimeout(buddyTimer); buddyEl.classList.remove('in'); }
+
+  // Light up the matching painted card: top "Great job!" for correct, bottom "Oops!" for wrong.
+  function showFeedback(ok) {
+    fbGoodEl.classList.toggle('lit', ok);
+    fbBadEl.classList.toggle('lit', !ok);
+  }
+  function clearFeedback() { fbGoodEl.classList.remove('lit'); fbBadEl.classList.remove('lit'); hideReaction(); mfbHint(); }
+
+  function popChar(text, color) {
+    const el = document.createElement('div');
+    el.className = 'pop';
+    el.textContent = text;
+    el.style.color = color || pick(colors);
+    el.style.fontSize = (window.innerHeight * 0.4) + 'px';
+    el.style.left = (20 + Math.random() * 60) + '%';
+    el.style.top  = (25 + Math.random() * 45) + '%';
+    game.appendChild(el);
+    setTimeout(() => el.remove(), 1500);
+  }
+
+  // ---------- Star bar / score ----------
+  function updateStarbar() {
+    starbarEl.innerHTML = '';
+    for (let i = 0; i < STARS_PER_LEVEL; i++) {
+      const s = document.createElement('span');
+      s.className = 'lvlStar' + (i < levelStars ? ' on' : '');
+      s.textContent = '★';
+      starbarEl.appendChild(s);
+    }
+  }
+  function updateScore() { scoreEl.textContent = '⭐ ' + totalStars; }
+
+  // ---------- Game logic ----------
+  function tryAnswer(pressed) {
+    if (locked || !challenge) return;
+    clearHintTimer();
+    pressed = String(pressed).toUpperCase();
+    if (pressed.length !== 1) return;
+    if (challenge.style === 'seq') {
+      if (pressed === challenge.answer) seqAdvance(pressed);
+      else if (/[A-Z0-9]/.test(pressed)) { flashKey(pressed, false); wrong(pressed); }
+      return;
+    }
+    const right = pressed === challenge.answer;
+    flashKey(pressed, right);
+    if (right) correct(pressed);
+    else if (/[A-Z0-9]/.test(pressed)) wrong(pressed);
+  }
+
+  // A correct letter/digit in a Spelling/Counting word: advance, or finish the word.
+  function seqAdvance(pressed) {
+    stopAllSounds();
+    clearHintTimer();
+    flashKey(pressed, true);
+    popChar(pressed, '#2bb673');
+    playChime();
+    challenge.idx++;
+    if (challenge.idx >= challenge.seq.length) { seqComplete(); return; }
+    // reveal progress and move to the next letter/digit
+    challenge.answer = challenge.seq[challenge.idx];
+    game.classList.toggle('num-answer', /^[0-9]$/.test(challenge.answer));
+    challenge.render();
+    clearKeyHighlights();
+    hintStage = 0; scheduleHint();
+    if (mfb) { mfb.className = 'show good'; mfb.innerHTML = '<b>Nice!</b><span>Keep going!</span>'; }
+    { const na = challenge.answer; playPersona(isNum(na) ? 'find_num_' + na : 'find_let_' + na, L().next(na), { rate: 1.0 }); }
+  }
+  function seqComplete() {
+    locked = true;
+    levelStars++;
+    totalStars++; setNum('yako_points', totalStars);
+    updateStarbar(); updateScore();
+    const finished = levelStars >= STARS_PER_LEVEL;
+    if (finished) levelElapsed = (performance.now() - levelStartTime) / 1000;
+    challenge.revealAll();
+    clearKeyHighlights();
+    const w = challenge.word;
+    confetti(); showBuddy(); showFeedback(true); playReaction(true); playChime();
+    const dur = 2.0 + Math.random() * 1.5;
+    playApplause(dur);
+    if (mfb) {
+      mfb.className = 'show good';
+      mfb.innerHTML = '<b>' + (mode === 'spelling' ? ('You spelled ' + w + '!') : ("That's " + w + '!')) +
+                      '</b><span>Great job!</span>';
+    }
+    speakName(mode === 'spelling' ? L().doneSpell(w) : L().doneNum(w), { rate: 1.0 });
+    roundTimer = setTimeout(() => {
+      if (finished) completeLevel();
+      else { locked = false; newTarget(); }
+    }, dur * 1000 + 300);
+  }
+
+  function correct(pressed) {
+    stopAllSounds();
+    clearHintTimer();
+    locked = true;
+    levelStars++;
+    totalStars++; setNum('yako_points', totalStars);
+    updateStarbar(); updateScore();
+    const finished = levelStars >= STARS_PER_LEVEL;
+    if (finished) levelElapsed = (performance.now() - levelStartTime) / 1000;
+
+    if (challenge.revealAnswer) challenge.revealAnswer();   // show what it was
+    clearKeyHighlights();
+    popChar(pressed, '#2bb673');
+    if (challenge.style === 'number') highlightChoice(challenge.answer, true);
+    targetEl.style.transform = 'scale(1.15)';
+    const bl = targetEl.querySelector('.bigletter');
+    if (bl) bl.style.color = '#2bb673';
+    if (challenge.style === 'plain') targetEl.style.color = '#2bb673';
+
+    confetti();
+    showBuddy();
+    showFeedback(true);
+    playReaction(true);
+    playChime();
+    const dur = 2.0 + Math.random() * 1.5;        // 2–3.5 s between rounds
+    playApplause(dur);
+    playPersona(['cheer_1', 'cheer_2', 'cheer_3', 'cheer_4', 'cheer_5', 'cheer_6'], nextCheer(), { rate: 1.0 });   // real-voice cheer (synth fallback)
+
+    roundTimer = setTimeout(() => {
+      if (finished) completeLevel();
+      else { locked = false; newTarget(); }
+    }, dur * 1000 + 300);
+  }
+
+  function describeKey(k) { return /[0-9]/.test(k) ? "the number " + k : "the letter " + k; }
+  function wrongPhrase(pressed) {
+    const t = L();
+    if (challenge.style === 'count')  return t.wrongCount(locCreat(challenge.creatures));
+    if (challenge.style === 'math')   return t.wrongMath();
+    if (challenge.style === 'number') return t.again();
+    return t.wrong(t.dk(String(pressed).toUpperCase()), challenge.answer);
+  }
+  function wrong(keyPressed) {
+    stopAllSounds();
+    popChar(keyPressed, '#e0466b');
+    if (challenge.style === 'number') highlightChoice(keyPressed, false);
+    showFeedback(false);
+    playReaction(false);
+    playTryAgainTone();
+    targetEl.style.transform = 'scale(0.94)';
+    setTimeout(() => { targetEl.style.transform = 'scale(1)'; }, 150);
+    playPersona('try', wrongPhrase(keyPressed));   // real-voice "try again" (synth fallback)
+    scheduleHint();   // restart the idle countdown toward the next hint
+  }
+
+  // ---------- Level complete ----------
+  function completeLevel() {
+    stopAllSounds();
+    const bestKey = 'yako_best_' + mode, lastKey = 'yako_last_' + mode, cntKey = 'yako_count_' + mode;
+    const prevBest = getNum(bestKey), prevLast = getNum(lastKey);
+    const count = (getNum(cntKey) || 0) + 1;
+    const isBest = (prevBest == null) || (levelElapsed < prevBest);
+    if (isBest) setNum(bestKey, levelElapsed);
+    setNum(lastKey, levelElapsed);
+    setNum(cntKey, count);
+    const bestShown = isBest ? levelElapsed : prevBest;
+
+    let improve = '';
+    if (prevLast != null) {
+      const d = prevLast - levelElapsed;
+      if (d > 0.05) improve = "That's " + fmt(d) + " seconds faster than last time!";
+      else if (d < -0.05) improve = "A little slower — keep practicing!";
+      else improve = "About the same as last time!";
+    }
+    if (isBest && prevBest != null) improve = "New best time! " + improve;
+
+    winEl.innerHTML =
+      '<div class="winCard">' +
+        '<img class="winYako" src="yako_cheer.png" alt="" onerror="this.style.display=\'none\'">' +
+        '<div class="winTitle">Level ' + level + ' complete!</div>' +
+        '<div class="winStars">★★★★★</div>' +
+        '<div class="winTime">Time: ' + fmt(levelElapsed) + 's</div>' +
+        '<div class="winBest">Best: ' + fmt(bestShown) + 's</div>' +
+        (improve ? '<div class="winImprove">' + improve + '</div>' : '') +
+        '<div class="winGo">Tap anywhere for the next level →</div>' +
+      '</div>';
+    winEl.classList.add('show');
+
+    confetti();
+    showBuddy();
+    playChime();
+    playApplause(4.5);
+    playPersona('level', L().level(level), { rate: 1.0 });   // real-voice level-up (synth fallback)
+
+    clearTimeout(winTimer);
+    winTimer = setTimeout(nextLevel, 8000);
+  }
+  function nextLevel() {
+    clearTimeout(winTimer);
+    if (!winEl.classList.contains('show')) return;
+    winEl.classList.remove('show');
+    level++;
+    levelStars = 0;
+    updateStarbar();
+    levelStartTime = performance.now();
+    locked = false;
+    newTarget();
+  }
+  winEl.addEventListener('click', nextLevel);
+
+  // ---------- Free play ----------
+  const freeLabels = {
+    ' ': 'SPACE', 'Enter': '↵', 'Backspace': '⌫', 'Tab': '⇥',
+    'ArrowUp': '↑', 'ArrowDown': '↓', 'ArrowLeft': '←', 'ArrowRight': '→',
+    'Shift': '⇧', 'Meta': '⌘', 'Control': 'CTRL', 'Alt': 'ALT', 'CapsLock': 'CAPS'
+  };
+  const FUN_EMOJIS = ['⭐','🎈','🎉','💫','🌈','🍭','🦄','🐶','🐱','🚀','🌟','💛','🍩','🦋','🐠','🌸','⚡','🐚'];
+  function flashBackground(color) {
+    flashEl.style.background = color;
+    flashEl.style.animation = 'none';
+    void flashEl.offsetWidth;
+    flashEl.style.animation = 'flashPulse .55s ease-out';
+  }
+  function sprinkleEmojis(n) {
+    for (let i = 0; i < (n || 4); i++) {
+      const el = document.createElement('div');
+      el.className = 'pop';
+      el.textContent = pick(FUN_EMOJIS);
+      el.style.fontSize = (40 + Math.random() * 90) + 'px';
+      el.style.left = (Math.random() * 100) + '%';
+      el.style.top  = (Math.random() * 100) + '%';
+      game.appendChild(el);
+      setTimeout(() => el.remove(), 1400);
+    }
+  }
+  function freePlayKey(e) {
+    // ignore modifier keys (⌘ Ctrl Alt Shift Caps, etc.) — they shouldn't show in Free Play
+    if (['Meta','Control','Alt','Shift','CapsLock','AltGraph','ContextMenu','OS','Fn','Dead'].includes(e.key)) return;
+    stopAllSounds();
+    const color = pick(colors);
+    const text = freeLabels[e.key] || (e.key.length === 1 ? e.key.toUpperCase() : e.key);
+    if (freeLetterEl) freeLetterEl.textContent = text;       // show touched key in the card
+    popChar(text, color);
+    flashBackground(color);
+    playNote(e.key);
+    sprinkleEmojis(3);
+    if (e.key === ' ')      { confetti(); sprinkleEmojis(12); playApplause(); }
+    else if (e.key === 'Enter') { confetti(); playChime(); }
+    if (e.key.length === 1 && /[a-z0-9]/i.test(e.key)) say([chClip(e.key)], e.key.toLowerCase());
+  }
+
+  // ---------- Key handling ----------
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { backToMenu(); return; }
+    if (startScreen.style.display !== 'none') return;
+    if (winEl.classList.contains('show')) { e.preventDefault(); nextLevel(); return; }
+    e.preventDefault();
+    if (mode === 'free') { freePlayKey(e); return; }
+    if (e.key.length !== 1) return;
+    tryAnswer(e.key);
+  }, true);
+  window.addEventListener('keydown', e => {
+    if (startScreen.style.display === 'none' && e.key !== 'Escape') e.preventDefault();
+  }, true);
+
+  // ---------- Start / menu ----------
+  function startGame(m) {
+    mode = m;
+    playerName = ((nameInput && nameInput.value) || '').trim().replace(/\s{2,}/g, ' ');
+    if (playerName) {
+      playerName = playerName.charAt(0).toUpperCase() + playerName.slice(1);
+      try { localStorage.setItem('kbfun_name', playerName); } catch (e) {}
+    }
+    I.setPlayerName(playerName);   // the narrator greets the child by name
+    ensureAudio();
+    speak(" ");
+    startScreen.style.display = 'none';
+    game.style.display = 'flex';
+    lastTarget = null;
+    locked = false; clearTimeout(roundTimer);   // never carry a lock/celebration timer into a new game
+    choicesEl.innerHTML = '';
+    game.classList.remove('choices-mode');
+    clearKeyHighlights();
+    clearHintTimer(); hintStage = 0;
+    hideBuddy();
+    winEl.classList.remove('show');
+    clearFeedback();
+
+    totalStars = getNum('yako_points') || 0;
+    updateScore();
+
+    stopBarkLoop();
+    if (mode === 'free') {
+      game.classList.add('free-mode');
+      game.style.background = '';
+      freeKeyCount = 0;
+      if (freeLetterEl) freeLetterEl.textContent = '';
+      const fb = document.getElementById('freeBg');
+      if (fb) { try { fb.currentTime = 0; } catch (e) {} fb.play().catch(() => {}); }
+      hintEl.textContent = 'Tap any key to play! 🎵   Spacebar = party 🎉   (🏠 = menu)';
+    } else {
+      game.classList.remove('free-mode');
+      game.style.background = '';   // solid sea color behind the painted interface
+      // on phones the painted seaside video is the game background for every mode
+      if (window.matchMedia('(max-width: 760px)').matches) {
+        const fb = document.getElementById('freeBg');
+        if (fb) { try { fb.currentTime = 0; } catch (e) {} fb.play().catch(() => {}); }
+      } else {
+        const gb = document.getElementById('gameBg');   // desktop: the living painted scene
+        if (gb) { gb.play().catch(() => {}); }
+      }
+      level = 1; levelStars = 0; levelElapsed = 0;
+      updateStarbar();
+      levelStartTime = performance.now();
+      const cat = (mode === 'colors' || mode === 'shapes' || mode === 'animals');
+      game.classList.toggle('seq-mode', mode === 'spelling' || mode === 'counting');
+      game.classList.toggle('big-target', mode === 'sounds' || mode === 'countobj' || mode === 'math');
+      const pr = L().prompt;
+      promptEl.textContent = cat ? (answerStyle === 'number' ? pr.catNum : pr.cat) : (pr[mode] || pr.both);
+      hintEl.textContent = 'Look closely and find the key!';
+      setTimeout(newTarget, 500);
+    }
+  }
+  function backToMenu() {
+    stopAllSounds();
+    const fb = document.getElementById('freeBg'); if (fb) fb.pause();
+    hideBuddy();
+    clearHintTimer();
+    clearTimeout(winTimer);
+    clearTimeout(roundTimer); locked = false;
+    winEl.classList.remove('show');
+    clearFeedback();
+    game.style.display = 'none';
+    game.style.background = '';
+    game.classList.remove('free-mode');
+    startScreen.style.display = 'flex';
+    targetEl.textContent = '';
+    startBarkLoop();   // Yako's pup barks while on the menu
+  }
+
+  // ---------- Background video: constant, bulletproof looping (home + in-game) ----------
+  // Native `loop` never stalls (unlike a rAF ping-pong, which pauses on mobile when
+  // backgrounded). A watchdog re-starts whichever background should be visible right now.
+  (function loopBackgrounds() {
+    const RATE = 0.40;                                        // 40% speed, as before
+    const vids = [document.getElementById('bgvid'), document.getElementById('freeBg'), document.getElementById('gameBg')].filter(Boolean);
+    // NOTE: offsetParent is always null for position:fixed elements — use
+    // getClientRects() to test real visibility (it also sees hidden ancestors).
+    const showing = v => v.getClientRects().length > 0;
+    vids.forEach(v => {
+      v.loop = true; v.muted = true; v.playsInline = true; v.setAttribute('playsinline', '');
+      try { v.playbackRate = RATE; } catch (e) {}
+      v.addEventListener('play',   () => { try { v.playbackRate = RATE; } catch (e) {} });
+      v.addEventListener('pause',  () => { if (showing(v)) v.play().catch(() => {}); });  // resist stalls
+    });
+    function kick() {
+      vids.forEach(v => {
+        if (!showing(v)) return;                              // not currently visible → leave it
+        try { v.playbackRate = RATE; } catch (e) {}
+        if (v.paused || v.ended) { v.play().catch(() => {}); }
+      });
+    }
+    kick();
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) kick(); });
+    document.addEventListener('pointerdown', kick);           // unblock autoplay after first tap (iOS)
+    setInterval(kick, 4000);                                  // heartbeat: keep them running forever
+  })();
+
+  // ---------- Wiring ----------
+  buildKeyboard();
+  fillYako(yakoEl, 'yakoChar', '👦🐕');
+  startBarkLoop();   // begins once audio is unlocked by the first tap
+  // Unlock audio on the first interaction (browsers block sound until a tap)
+  document.addEventListener('pointerdown', () => { ensureAudio(); }, { once: true });
+  try { const saved = localStorage.getItem('kbfun_name'); if (saved && nameInput) nameInput.value = saved; } catch (e) {}
+  try {
+    const a = localStorage.getItem('kbfun_ans');
+    if (a) { answerStyle = a; document.querySelectorAll('.ansBtn').forEach(b => b.classList.toggle('active', b.dataset.ans === a)); }
+  } catch (e) {}
+
+  document.querySelectorAll('.ansBtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      answerStyle = btn.dataset.ans;
+      document.querySelectorAll('.ansBtn').forEach(b => b.classList.toggle('active', b === btn));
+      try { localStorage.setItem('kbfun_ans', answerStyle); } catch (e) {}
+    });
+  });
+  document.querySelectorAll('.modeBtn').forEach(btn => {
+    btn.addEventListener('click', () => startGame(btn.dataset.mode));
+  });
+  exitBtn.addEventListener('click', backToMenu);
+  document.getElementById('logo').addEventListener('click', backToMenu);
+  soundBtn.addEventListener('click', () => {
+    A.setMuted(!A.isMuted());                             // muting also stops all sounds
+    soundBtn.classList.toggle('muted', A.isMuted());      // green (on) / red (off)
+  });
+
+  // ---- Narrator language + character toggles (home menu) ----
+  function refreshVoiceUI() {
+    document.querySelectorAll('#langRow .flagBtn').forEach(b => b.classList.toggle('sel', b.dataset.lang === I.getLang()));
+    document.querySelectorAll('#personaRow .personaBtn').forEach(b => b.classList.toggle('sel', b.dataset.persona === A.getPersona()));
+  }
+  const langRowEl = document.getElementById('langRow');
+  const personaRowEl = document.getElementById('personaRow');
+  if (langRowEl) langRowEl.addEventListener('click', (e) => {
+    const b = e.target.closest('.flagBtn'); if (!b) return;
+    I.setLang(b.dataset.lang);
+    pickVoice(); refreshVoiceUI(); ensureAudio();
+    stopAllSounds(); playPersona('greet', L().greet);  // quick preview in the chosen language/voice
+  });
+  if (personaRowEl) personaRowEl.addEventListener('click', (e) => {
+    const b = e.target.closest('.personaBtn'); if (!b) return;
+    A.setPersona(b.dataset.persona);
+    pickVoice(); refreshVoiceUI(); ensureAudio();
+    stopAllSounds(); playPersona('greet', L().greet);  // quick preview in the chosen voice
+  });
+  refreshVoiceUI();
+
+  // Touchscreen taps in free play make a burst
+  document.addEventListener('pointerdown', (e) => {
+    if (startScreen.style.display === 'none' && mode === 'free' && !e.target.closest('button')) popChar('★');
+  });
+})();
+
+// ---- Animated favicon: gently wave/rock Yako in the browser tab ----
+(function () {
+  const link = document.querySelector("link[rel='icon']");
+  if (!link || typeof document.createElement('canvas').getContext !== 'function') return;
+  const SIZE = 64;
+  const cv = document.createElement('canvas'); cv.width = cv.height = SIZE;
+  const cx = cv.getContext('2d');
+  const img = new Image();
+  let frame = 0;
+  function draw() {
+    const t = (frame++) * 0.08;                  // ~12.5 fps
+    const ang = Math.sin(t * 3.4) * 0.17;        // rock ~±10°  (waving feel)
+    const bob = Math.sin(t * 5.0) * 1.6;         // subtle bounce
+    const sc  = 0.97 + 0.03 * Math.abs(Math.sin(t * 5.0)); // tiny breathe
+    cx.clearRect(0, 0, SIZE, SIZE);
+    cx.save();
+    cx.translate(SIZE / 2, SIZE / 2 + bob);
+    cx.rotate(ang);
+    cx.scale(sc, sc);
+    cx.drawImage(img, -SIZE / 2, -SIZE / 2, SIZE, SIZE);
+    cx.restore();
+    try { link.href = cv.toDataURL('image/png'); } catch (e) {}
+  }
+  img.onload = function () { draw(); setInterval(draw, 80); };
+  img.src = 'ui/favicon.png';
+})();
+
+// ---- Remove any old service worker + caches (they were breaking the video/asset updates) ----
+// PWA install can be re-enabled later once the game is finalized.
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function (regs) {
+    var had = regs.length;
+    Promise.all(regs.map(function (r) { return r.unregister(); }))
+      .then(function () { return (window.caches ? caches.keys() : []); })
+      .then(function (keys) { return Promise.all((keys || []).map(function (k) { return caches.delete(k); })); })
+      .then(function () { if (had) location.reload(); });   // reload once into a clean, SW-free state
+  }).catch(function () {});
+}
+</script>
+</body>
+</html>

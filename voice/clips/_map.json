@@ -1,0 +1,527 @@
+{
+"let_A": {
+"file": "src_A.mp3",
+"start": 0.0,
+"end": 5.037
+},
+"let_B": {
+"file": "src_A.mp3",
+"start": 5.037,
+"end": 9.129
+},
+"let_C": {
+"file": "src_A.mp3",
+"start": 9.129,
+"end": 11.121
+},
+"let_D": {
+"file": "src_A.mp3",
+"start": 11.121,
+"end": 14.308
+},
+"let_E": {
+"file": "src_A.mp3",
+"start": 14.308,
+"end": 16.961
+},
+"let_F": {
+"file": "src_A.mp3",
+"start": 16.961,
+"end": 19.422
+},
+"let_G": {
+"file": "src_A.mp3",
+"start": 19.422,
+"end": 21.683
+},
+"let_H": {
+"file": "src_A.mp3",
+"start": 21.683,
+"end": 23.78
+},
+"let_I": {
+"file": "src_A.mp3",
+"start": 23.78,
+"end": 25.506
+},
+"let_J": {
+"file": "src_A.mp3",
+"start": 25.506,
+"end": 27.205
+},
+"let_K": {
+"file": "src_A.mp3",
+"start": 27.205,
+"end": 28.455
+},
+"let_L": {
+"file": "src_A.mp3",
+"start": 28.455,
+"end": 32.647
+},
+"let_M": {
+"file": "src_A.mp3",
+"start": 32.647,
+"end": 33.993
+},
+"let_N": {
+"file": "src_A.mp3",
+"start": 33.993,
+"end": 35.711
+},
+"let_O": {
+"file": "src_A.mp3",
+"start": 35.711,
+"end": 37.769
+},
+"let_P": {
+"file": "src_A.mp3",
+"start": 37.769,
+"end": 43.382
+},
+"let_Q": {
+"file": "src_A.mp3",
+"start": 43.382,
+"end": 45.174
+},
+"let_R": {
+"file": "src_A.mp3",
+"start": 45.174,
+"end": 46.85
+},
+"let_S": {
+"file": "src_A.mp3",
+"start": 46.85,
+"end": 48.724
+},
+"let_T": {
+"file": "src_A.mp3",
+"start": 48.724,
+"end": 50.656
+},
+"let_U": {
+"file": "src_A.mp3",
+"start": 50.656,
+"end": 51.743
+},
+"let_V": {
+"file": "src_A.mp3",
+"start": 51.743,
+"end": 53.637
+},
+"let_W": {
+"file": "src_A.mp3",
+"start": 53.637,
+"end": 54.931
+},
+"let_X": {
+"file": "src_A.mp3",
+"start": 54.931,
+"end": 57.003
+},
+"let_Y": {
+"file": "src_A.mp3",
+"start": 57.003,
+"end": 59.295
+},
+"let_Z": {
+"file": "src_A.mp3",
+"start": 59.295,
+"end": 61.153
+},
+"num_0": {
+"file": "src_A.mp3",
+"start": 61.153,
+"end": 62.735
+},
+"num_1": {
+"file": "src_A.mp3",
+"start": 62.735,
+"end": 64.556
+},
+"num_2": {
+"file": "src_A.mp3",
+"start": 64.556,
+"end": 66.263
+},
+"num_3": {
+"file": "src_A.mp3",
+"start": 66.263,
+"end": 67.784
+},
+"num_4": {
+"file": "src_A.mp3",
+"start": 67.784,
+"end": 69.482
+},
+"num_5": {
+"file": "src_A.mp3",
+"start": 69.482,
+"end": 71.409
+},
+"num_6": {
+"file": "src_A.mp3",
+"start": 71.409,
+"end": 73.444
+},
+"num_7": {
+"file": "src_A.mp3",
+"start": 73.444,
+"end": 76.687
+},
+"num_8": {
+"file": "src_A.mp3",
+"start": 76.687,
+"end": 77.865
+},
+"num_9": {
+"file": "src_A.mp3",
+"start": 77.865,
+"end": 79.97
+},
+"frag_find_letter": {
+"file": "src_A.mp3",
+"start": 79.97,
+"end": 81.09
+},
+"frag_find_number": {
+"file": "src_A.mp3",
+"start": 81.09,
+"end": 82.158
+},
+"frag_now_letter": {
+"file": "src_A.mp3",
+"start": 82.158,
+"end": 83.276
+},
+"frag_now_number": {
+"file": "src_A.mp3",
+"start": 83.276,
+"end": 84.291
+},
+"frag_great_letter": {
+"file": "src_A.mp3",
+"start": 84.291,
+"end": 85.589
+},
+"frag_great_number": {
+"file": "src_A.mp3",
+"start": 85.589,
+"end": 91.683
+},
+"frag_starts_with": {
+"file": "src_A.mp3",
+"start": 91.683,
+"end": 93.705
+},
+"frag_spell": {
+"file": "src_A.mp3",
+"start": 93.705,
+"end": 96.782
+},
+"frag_make_number": {
+"file": "src_A.mp3",
+"start": 96.782,
+"end": 99.891
+},
+"frag_thats_letter": {
+"file": "src_A.mp3",
+"start": 99.891,
+"end": 100.913
+},
+"frag_thats_number": {
+"file": "src_A.mp3",
+"start": 100.913,
+"end": 101.861
+},
+"frag_canyou_letter": {
+"file": "src_A.mp3",
+"start": 101.861,
+"end": 104.007
+},
+"frag_canyou_number": {
+"file": "src_A.mp3",
+"start": 104.007,
+"end": 106.438
+},
+"name_red": {
+"file": "src_A.mp3",
+"start": 106.438,
+"end": 108.28
+},
+"name_orange": {
+"file": "src_A.mp3",
+"start": 108.28,
+"end": 109.532
+},
+"name_yellow": {
+"file": "src_A.mp3",
+"start": 109.532,
+"end": 110.948
+},
+"name_green": {
+"file": "src_A.mp3",
+"start": 110.948,
+"end": 112.128
+},
+"name_blue": {
+"file": "src_A.mp3",
+"start": 112.128,
+"end": 113.474
+},
+"name_purple": {
+"file": "src_A.mp3",
+"start": 113.474,
+"end": 114.984
+},
+"name_pink": {
+"file": "src_A.mp3",
+"start": 114.984,
+"end": 116.461
+},
+"name_brown": {
+"file": "src_A.mp3",
+"start": 116.461,
+"end": 118.043
+},
+"name_circle": {
+"file": "src_A.mp3",
+"start": 118.043,
+"end": 119.533
+},
+"name_square": {
+"file": "src_A.mp3",
+"start": 119.533,
+"end": 121.528
+},
+"name_triangle": {
+"file": "src_A.mp3",
+"start": 121.528,
+"end": 123.178
+},
+"name_heart": {
+"file": "src_A.mp3",
+"start": 123.178,
+"end": 124.624
+},
+"name_star": {
+"file": "src_A.mp3",
+"start": 124.624,
+"end": 126.371
+},
+"name_diamond": {
+"file": "src_A.mp3",
+"start": 126.371,
+"end": 128.293
+},
+"name_cat": {
+"file": "src_A.mp3",
+"start": 128.293,
+"end": 130.309
+},
+"name_dog": {
+"file": "src_A.mp3",
+"start": 130.309,
+"end": 131.939
+},
+"name_elephant": {
+"file": "src_A.mp3",
+"start": 131.939,
+"end": 133.411
+},
+"name_frog": {
+"file": "src_A.mp3",
+"start": 133.411,
+"end": 135.186
+},
+"name_giraffe": {
+"file": "src_A.mp3",
+"start": 135.186,
+"end": 136.794
+},
+"name_horse": {
+"file": "src_A.mp3",
+"start": 136.794,
+"end": 138.373
+},
+"name_lion": {
+"file": "src_A.mp3",
+"start": 138.373,
+"end": 140.471
+},
+"name_monkey": {
+"file": "src_A.mp3",
+"start": 140.471,
+"end": 142.315
+},
+"name_owl": {
+"file": "src_A.mp3",
+"start": 142.315,
+"end": 144.321
+},
+"name_pig": {
+"file": "src_A.mp3",
+"start": 144.321,
+"end": 145.826
+},
+"name_rabbit": {
+"file": "src_A.mp3",
+"start": 145.826,
+"end": 147.337
+},
+"name_snake": {
+"file": "src_A.mp3",
+"start": 147.337,
+"end": 148.795
+},
+"name_tiger": {
+"file": "src_A.mp3",
+"start": 148.795,
+"end": 150.578
+},
+"name_zebra": {
+"file": "src_A.mp3",
+"start": 150.578,
+"end": 152.701
+},
+"cheer_1": {
+"file": "src_A.mp3",
+"start": 152.701,
+"end": 154.595
+},
+"cheer_2": {
+"file": "src_A.mp3",
+"start": 154.595,
+"end": 156.134
+},
+"cheer_3": {
+"file": "src_A.mp3",
+"start": 156.134,
+"end": 157.965
+},
+"cheer_4": {
+"file": "src_A.mp3",
+"start": 157.965,
+"end": 159.867
+},
+"cheer_5": {
+"file": "src_A.mp3",
+"start": 159.867,
+"end": 161.485
+},
+"cheer_6": {
+"file": "src_A.mp3",
+"start": 161.485,
+"end": 163.505
+},
+"cheer_7": {
+"file": "src_A.mp3",
+"start": 163.505,
+"end": 165.422
+},
+"cheer_8": {
+"file": "src_A.mp3",
+"start": 165.422,
+"end": 166.912
+},
+"cheer_9": {
+"file": "src_A.mp3",
+"start": 166.912,
+"end": 169.867
+},
+"cheer_10": {
+"file": "src_A.mp3",
+"start": 169.867,
+"end": 172.264
+},
+"cheer_11": {
+"file": "src_A.mp3",
+"start": 172.264,
+"end": 173.676
+},
+"cheer_12": {
+"file": "src_A.mp3",
+"start": 173.676,
+"end": 175.73
+},
+"try_oops": {
+"file": "src_B.mp3",
+"start": 0.0,
+"end": 6.999
+},
+"try_notquite": {
+"file": "src_B.mp3",
+"start": 6.999,
+"end": 8.861
+},
+"try_almost": {
+"file": "src_B.mp3",
+"start": 8.861,
+"end": 10.848
+},
+"try_goodtry": {
+"file": "src_B.mp3",
+"start": 10.848,
+"end": 13.651
+},
+"try_again": {
+"file": "src_B.mp3",
+"start": 13.651,
+"end": 18.83
+},
+"done_youdidit": {
+"file": "src_C.mp3",
+"start": 0.0,
+"end": 0.828
+},
+"done_yougotit": {
+"file": "src_C.mp3",
+"start": 0.828,
+"end": 2.272
+},
+"done_hooray": {
+"file": "src_C.mp3",
+"start": 2.272,
+"end": 3.415
+},
+"done_spelledit": {
+"file": "src_C.mp3",
+"start": 3.415,
+"end": 4.67
+},
+"done_madenumber": {
+"file": "src_C.mp3",
+"start": 4.67,
+"end": 5.925
+},
+"lvl_fivestars": {
+"file": "src_C.mp3",
+"start": 5.925,
+"end": 7.224
+},
+"lvl_finished": {
+"file": "src_C.mp3",
+"start": 7.224,
+"end": 8.536
+},
+"lvl_complete": {
+"file": "src_C.mp3",
+"start": 8.536,
+"end": 9.829
+},
+"misc_findkey": {
+"file": "src_C.mp3",
+"start": 9.829,
+"end": 11.088
+},
+"misc_hi": {
+"file": "src_C.mp3",
+"start": 11.088,
+"end": 12.383
+},
+"misc_tap": {
+"file": "src_C.mp3",
+"start": 12.383,
+"end": 13.32
+}
+}

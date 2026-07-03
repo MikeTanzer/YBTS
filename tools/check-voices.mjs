@@ -42,6 +42,22 @@ function expectedClips(lang) {
   clips.greet = c.greet;
   clips.try   = c.again;                                       // "Oops! Try again!" family
   clips.level = fmt(c.level, { level: '' }).replace(/\s+/g, ' ');  // recorded clip is the generic (numberless) version
+  // phonics intros (Letter Sounds game)
+  for (const l of LETTERS) {
+    const e = c.phonics[l];
+    clips[`sound_${l}`] = fmt(c.sound, { letter: l, word: e.word, sound: e.sound || '' }).replace(/\.\.\./g, ',');
+  }
+  // How Many? intros — per creature, grammar-correct override when present
+  for (const cr of ['shells', 'crabs', 'starfish', 'fish', 'octopuses', 'dolphins'])
+    clips[`howmany_${cr}`] = c.howManyClips ? c.howManyClips[cr]
+                                            : fmt(c.howMany, { creatures: lang === 'en' ? cr : c.creatures[cr] });
+  // free-play key names ("B.", "7.")
+  for (const k of [...LETTERS, ...DIGITS]) clips[`name_${k}`] = `${k}.`;
+  // one-off lines
+  clips.which_one   = c.prompt.catNum;
+  clips.done_spell  = c.doneSpellClip;
+  clips.done_num    = c.doneNumClip;
+  clips.make_number = c.makeNumber;
   return clips;
 }
 

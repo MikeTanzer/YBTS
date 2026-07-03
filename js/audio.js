@@ -221,6 +221,24 @@ window.YAKO.audio = (function () {
     const p = a.play();
     if (p && p.catch) p.catch(() => { if (my === VOICE.token && fallback) speakName(fallback, opts); });
   }
+  // Play several persona clips back-to-back (e.g. "Let's make a big number!" + "Find the number 4!").
+  // Any failure mid-chain falls back to speaking the full synth sentence.
+  function playPersonaChain(keys, fallback, opts) {
+    if (muted) return;
+    stopVoice();
+    const my = ++VOICE.token, a = VOICE.a;
+    const dir = VOICE.dir + I().langPrefix() + '/' + voicePersona + '/';
+    let i = 0;
+    function step() {
+      if (my !== VOICE.token || i >= keys.length) return;
+      a.src = dir + keys[i++] + '.mp3';
+      a.onended = () => { if (my === VOICE.token) setTimeout(step, 120); };
+      a.onerror = () => { if (my === VOICE.token && fallback) speakName(fallback, opts); };
+      const p = a.play();
+      if (p && p.catch) p.catch(() => { if (my === VOICE.token && fallback) speakName(fallback, opts); });
+    }
+    step();
+  }
   function nextCheer() { const a = I().L().cheers; return a[(Math.random() * a.length) | 0]; }
 
   return {
@@ -230,7 +248,7 @@ window.YAKO.audio = (function () {
     startBarkLoop: startBarkLoop, stopBarkLoop: stopBarkLoop,
     setPersona: setPersona, getPersona: getPersona, pickVoice: pickVoice,
     speak: speak, speakName: speakName,
-    say: say, playPersona: playPersona, stopVoice: stopVoice,
+    say: say, playPersona: playPersona, playPersonaChain: playPersonaChain, stopVoice: stopVoice,
     chClip: chClip, isNum: isNum, nextCheer: nextCheer
   };
 })();

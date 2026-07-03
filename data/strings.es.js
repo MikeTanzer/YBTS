@@ -9,7 +9,19 @@ window.YAKO_STRINGS.es = {
   next: "¡Muy bien! Ahora encuentra {key}.",
   countIntro: "El siguiente número es {num}. ¡Primero, encuentra el número {digit}!",
   sound: "{letter}... de {word}. ¡Encuentra la letra {letter}!",
-  howMany: "¿Cuántos {creatures} hay? ¡Cuéntalos y aprieta el número!",
+  howMany: "¿Cuántos hay? ¡Cuéntalos y aprieta el número!",
+  // exact per-creature questions for the recorded clips (correct gender: cuántas conchas/estrellas)
+  howManyClips: {
+    shells:    "¿Cuántas conchas hay? ¡Cuéntalas y aprieta el número!",
+    crabs:     "¿Cuántos cangrejos hay? ¡Cuéntalos y aprieta el número!",
+    starfish:  "¿Cuántas estrellas de mar hay? ¡Cuéntalas y aprieta el número!",
+    fish:      "¿Cuántos peces hay? ¡Cuéntalos y aprieta el número!",
+    octopuses: "¿Cuántos pulpos hay? ¡Cuéntalos y aprieta el número!",
+    dolphins:  "¿Cuántos delfines hay? ¡Cuéntalos y aprieta el número!"
+  },
+  doneSpellClip: "¡Deletreaste la palabra! ¡Increíble!",
+  doneNumClip:   "¡Formaste el número! ¡Increíble!",
+  makeNumber:    "¡Vamos a formar un número grande!",
   mathAdd: "{a} {creatures} y {b} {creatures} más. ¿Cuántos hay en total?",
   mathSub: "Hay {a} {creatures}. {b} se van nadando. ¿Cuántos quedan?",
   doneSpell: "¡Deletreaste {word}! ¡Increíble!",

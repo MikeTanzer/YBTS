@@ -9,7 +9,19 @@ window.YAKO_STRINGS.fr = {
   next: "Bravo ! Maintenant trouve {key}.",
   countIntro: "Le prochain nombre est {num}. D'abord, trouve le chiffre {digit} !",
   sound: "{letter}... comme {word} ! Trouve la lettre {letter} !",
-  howMany: "Combien de {creatures} ? Compte-les, puis appuie sur le chiffre !",
+  howMany: "Regarde bien ! Combien y en a-t-il ? Appuie sur le chiffre !",
+  // exact per-creature questions for the recorded clips (correct elision: "d'étoiles")
+  howManyClips: {
+    shells:    "Combien de coquillages ? Compte-les, puis appuie sur le chiffre !",
+    crabs:     "Combien de crabes ? Compte-les, puis appuie sur le chiffre !",
+    starfish:  "Combien d'étoiles de mer ? Compte-les, puis appuie sur le chiffre !",
+    fish:      "Combien de poissons ? Compte-les, puis appuie sur le chiffre !",
+    octopuses: "Combien de poulpes ? Compte-les, puis appuie sur le chiffre !",
+    dolphins:  "Combien de dauphins ? Compte-les, puis appuie sur le chiffre !"
+  },
+  doneSpellClip: "Tu as épelé le mot ! Super !",
+  doneNumClip:   "Tu as formé le nombre ! Super !",
+  makeNumber:    "Formons un grand nombre !",
   mathAdd: "{a} {creatures} et {b} {creatures} de plus. Combien en tout ?",
   mathSub: "Il y a {a} {creatures}. {b} s'en vont. Combien en reste-t-il ?",
   doneSpell: "Tu as épelé {word} ! Super !",

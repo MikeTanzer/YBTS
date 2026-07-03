@@ -28,7 +28,7 @@ const LANGS    = ['en', 'fr', 'es'];
 const PERSONAS = ['mom', 'dad', 'grandpa', 'grandma'];   // Isabella / Mark / Brooks / Mabel
 const LETTERS  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const DIGITS   = '0123456789'.split('');
-const RECORDED_CHEERS = 6;                               // cheer_1..cheer_6 exist as recordings
+const RECORDED_CHEERS = 8;                               // cheer_1..cheer_8 exist as recordings
 
 const fmt = (t, v) => String(t).replace(/\{(\w+)\}/g, (m, k) => (v && k in v) ? v[k] : m);
 
